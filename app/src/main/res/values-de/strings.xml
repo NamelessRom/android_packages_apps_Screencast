@@ -18,8 +18,9 @@
   -->
 <resources>
   <string name="app_name">Bildschirmaufnahme</string>
-  <string name="start_description">\'Bildschirmaufnahme starten\' antippen, um eine Videoaufnahme Ihres Bildschirmes und des Mikrofons zu starten.</string>
+  <string name="start_description">\'%s\' antippen, um eine Videoaufnahme Ihres Bildschirmes und des Mikrofons zu starten.</string>
   <string name="start_screencast">Bildschirmaufnahme starten</string>
+    <string name="stop_description">\'%s\' antippen, um die Videoaufnahme Ihres Bildschirmes und des Mikrofons zu stoppen.</string>
   <string name="stop">Stop</string>
   <string name="share">Teilen</string>
   <string name="insufficient_storage">Zu wenig Speicher</string>
