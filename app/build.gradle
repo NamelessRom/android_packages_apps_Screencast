@@ -1,0 +1,17 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 319
+    buildToolsVersion "20.0.0"
+
+    defaultConfig {
+        minSdkVersion 19
+        targetSdkVersion 319
+    }
+    buildTypes {
+        release {
+            runProguard false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}

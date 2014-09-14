@@ -1,0 +1,60 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="org.namelessrom.screencast"
+    android:versionCode="1"
+    android:versionName="1.0.0">
+
+    <uses-sdk
+        android:minSdkVersion="19"
+        android:targetSdkVersion="19" />
+
+    <!-- External storage -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!-- Toggling the pointer, etc -->
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <!-- Audio recording -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.CAPTURE_AUDIO_OUTPUT" />
+    <!-- Video recording -->
+    <uses-permission android:name="android.permission.CAPTURE_VIDEO_OUTPUT" />
+    <uses-permission android:name="android.permission.CAPTURE_SECURE_VIDEO_OUTPUT" />
+
+    <application
+        android:allowBackup="false"
+        android:label="@string/app_name"
+        android:icon="@drawable/ic_launcher">
+        <activity
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:name=".MainActivity"
+            android:theme="@android:style/Theme.Holo.Dialog.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <receiver
+            android:name=".receivers.StartReceiver"
+            android:permission="android.permission.CAPTURE_SECURE_VIDEO_OUTPUT">
+            <intent-filter>
+                <action android:name="org.namelessrom.ACTION_START_SCREENCAST" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name=".receivers.ControlReceiver"
+            android:permission="android.permission.CAPTURE_SECURE_VIDEO_OUTPUT">
+            <intent-filter>
+                <action android:name="org.namelessrom.ACTION_STOP_SCREENCAST" />
+                <action android:name="org.namelessrom.SHOW_TOUCHES" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:exported="false"
+            android:label="@string/app_name"
+            android:name=".services.ScreencastService"
+            android:permission="android.permission.CAPTURE_SECURE_VIDEO_OUTPUT" />
+    </application>
+
+</manifest>
