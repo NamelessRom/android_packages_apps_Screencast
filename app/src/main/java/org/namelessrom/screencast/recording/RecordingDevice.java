@@ -176,8 +176,8 @@ public class RecordingDevice extends EncoderDevice {
                 record.release();
                 record = null;
                 Logger.i("RecordingDevice", "=======RECORDING COMPLETE=======");
-            } catch (Exception localException) {
-                Logger.e("RecordingDevice", "Recorder error", localException);
+            } catch (Exception e) {
+                Logger.e("RecordingDevice", "Recorder error", e);
             }
         }
 

@@ -51,8 +51,8 @@ public abstract class EncoderDevice {
     private int mHeight;
 
     public EncoderDevice(final int width, final int height) {
-        this.mWidth = width;
-        this.mHeight = height;
+        mWidth = width;
+        mHeight = height;
     }
 
     private void destroyDisplaySurface(final MediaCodec codec) {
@@ -79,14 +79,14 @@ public abstract class EncoderDevice {
         try {
             final ArrayList<VideoEncoderCap> videoEncoderCaps = new ArrayList<VideoEncoderCap>();
             try {
-                File localFile = new File("/system/etc/media_profiles.xml");
-                FileInputStream localFileInputStream = new FileInputStream(localFile);
-                byte[] arrayOfByte = new byte[(int) localFile.length()];
-                localFileInputStream.read(arrayOfByte);
-                String str = new String(arrayOfByte);
-                RootElement localRootElement = new RootElement("MediaSettings");
-                Element localElement = localRootElement.requireChild("VideoEncoderCap");
-                ElementListener local1 = new ElementListener() {
+                final File mediaProfiles = new File("/system/etc/media_profiles.xml");
+                final FileInputStream fis = new FileInputStream(mediaProfiles);
+                byte[] byteArray = new byte[(int) mediaProfiles.length()];
+                fis.read(byteArray);
+                final String str = new String(byteArray);
+                final RootElement rootElement = new RootElement("MediaSettings");
+                final Element videoElement = rootElement.requireChild("VideoEncoderCap");
+                final ElementListener elementListener = new ElementListener() {
                     public void end() { }
 
                     public void start(Attributes attributes) {
@@ -95,11 +95,12 @@ public abstract class EncoderDevice {
                         }
                     }
                 };
-                localElement.setElementListener(local1);
-                StringReader localStringReader = new StringReader(str);
-                Parsers.parse(localStringReader, localRootElement.getContentHandler());
-            } catch (Exception localException1) {
-                Logger.e(TAG, "Uhoh", localException1);
+                videoElement.setElementListener(elementListener);
+
+                final StringReader stringReader = new StringReader(str);
+                Parsers.parse(stringReader, rootElement.getContentHandler());
+            } catch (Exception e) {
+                Logger.e(TAG, "Uhoh", e);
             }
 
             final VideoEncoderCap videoEncoderCap;
@@ -134,15 +135,15 @@ public abstract class EncoderDevice {
             mMediaCodec = MediaCodec.createEncoderByType("video/avc");
             mMediaCodec.configure(mediaFormat, null, null, 1);
 
-            final Surface localSurface = mMediaCodec.createInputSurface();
+            final Surface inputSurface = mMediaCodec.createInputSurface();
 
             mMediaCodec.start();
 
             final EncoderRunnable encoderRunnable = onSurfaceCreated(mMediaCodec);
-            Thread localThread = new Thread(encoderRunnable, "Encoder");
-            localThread.start();
+            final Thread encoderThread = new Thread(encoderRunnable, "Encoder");
+            encoderThread.start();
 
-            return localSurface;
+            return inputSurface;
         } catch (Exception e) {
             Logger.e(TAG, "error creating surface", e);
         }
@@ -154,14 +155,14 @@ public abstract class EncoderDevice {
 
     public VirtualDisplay registerVirtualDisplay(final Context ctx, final String displayName,
             final int width, final int height, final int dpi) {
-        final Surface localSurface = createDisplaySurface();
-        if (localSurface == null) { return null; }
+        final Surface displaySurface = createDisplaySurface();
+        if (displaySurface == null) { return null; }
 
         final DisplayManager dm = (DisplayManager) ctx.getSystemService(Context.DISPLAY_SERVICE);
         final int displayFlags = DisplayManager.VIRTUAL_DISPLAY_FLAG_SECURE |
                 DisplayManager.VIRTUAL_DISPLAY_FLAG_PUBLIC;
         final VirtualDisplay virtualDisplay = dm.createVirtualDisplay(
-                displayName, this.mWidth, this.mHeight, dpi, localSurface, displayFlags);
+                displayName, this.mWidth, this.mHeight, dpi, displaySurface, displayFlags);
         Logger.i(TAG, String.format("Created virtual display (%s)", displayFlags));
         mVirtualDisplay = virtualDisplay;
 
@@ -202,8 +203,8 @@ public abstract class EncoderDevice {
                 encode();
                 cleanup();
                 Logger.i(EncoderDevice.this.TAG, "=======ENCODING COMPELTE=======");
-            } catch (Exception localException) {
-                Logger.e(EncoderDevice.this.TAG, "Encoder error", localException);
+            } catch (Exception e) {
+                Logger.e(EncoderDevice.this.TAG, "Encoder error", e);
             }
         }
     }
