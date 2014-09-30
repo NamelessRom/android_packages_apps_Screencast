@@ -43,8 +43,10 @@ import android.widget.Toast;
 import org.namelessrom.screencast.Logger;
 import org.namelessrom.screencast.R;
 import org.namelessrom.screencast.Utils;
+import org.namelessrom.screencast.receivers.ControlReceiver;
 import org.namelessrom.screencast.recording.RecordingDevice;
 
+import java.io.File;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -58,6 +60,9 @@ public class ScreencastService extends Service {
     public static final String ACTION_START_SCREENCAST = "org.namelessrom.ACTION_START_SCREENCAST";
     public static final String ACTION_STOP_SCREENCAST  = "org.namelessrom.ACTION_STOP_SCREENCAST";
     public static final String ACTION_SHOW_TOUCHES     = "org.namelessrom.SHOW_TOUCHES";
+
+    public static final String ACTION_DELETE_SCREENCAST =
+            "org.namelessrom.ACTION_DELETE_SCREENCAST";
 
     private Notification.Builder mBuilder;
     private RecordingDevice      mRecorder;
@@ -80,6 +85,13 @@ public class ScreencastService extends Service {
         }
 
         final String action = intent.getAction();
+
+        if (TextUtils.equals(action, ACTION_DELETE_SCREENCAST)) {
+            final File recording = new File(intent.getData().getPath());
+            Logger.i(this, "Deleting -> %s -> %s", recording.getAbsolutePath(), recording.delete());
+            cancelShareNotification();
+            return START_STICKY;
+        }
 
         if (TextUtils.equals(action, ACTION_START_SCREENCAST)) {
             Utils.setRecording(this, true);
@@ -197,6 +209,11 @@ public class ScreencastService extends Service {
         viewIntent.setDataAndType(localUri, "video/mp4");
         viewIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
+        // create an intent, which deletes the record
+        final Intent delIntent = new Intent(this, ControlReceiver.class);
+        delIntent.setAction(ACTION_DELETE_SCREENCAST);
+        delIntent.setData(localUri);
+
         // get the duration of the screencast in minute:seconds format
         final String duration = new SimpleDateFormat("mm:ss")
                 .format(new Date(System.currentTimeMillis() - mStartTime));
@@ -206,6 +223,8 @@ public class ScreencastService extends Service {
                 PendingIntent.getActivity(this, 0, viewIntent, PendingIntent.FLAG_CANCEL_CURRENT);
         final PendingIntent pendingShareIntent =
                 PendingIntent.getActivity(this, 0, shareIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+        final PendingIntent pendingDeleteIntent =
+                PendingIntent.getBroadcast(this, 0, delIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
         // build the notification
         return new Notification.Builder(this)
@@ -215,7 +234,9 @@ public class ScreencastService extends Service {
                 .setContentText(getString(R.string.video_length, duration))
                 .setContentIntent(pendingViewIntent)
                 .addAction(android.R.drawable.ic_menu_share, getString(R.string.share),
-                        pendingShareIntent);
+                        pendingShareIntent)
+                .addAction(android.R.drawable.ic_menu_delete, getString(R.string.delete),
+                        pendingDeleteIntent);
     }
 
     private boolean hasAvailableSpace() {
@@ -224,10 +245,16 @@ public class ScreencastService extends Service {
     }
 
     private void sendShareNotification(final String filePath) {
-        final NotificationManager localNotificationManager =
+        final NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mBuilder = createShareNotificationBuilder(filePath);
-        localNotificationManager.notify(0, mBuilder.build());
+        notificationManager.notify(0, mBuilder.build());
+    }
+
+    private void cancelShareNotification() {
+        final NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(0);
     }
 
     private void cleanup() {

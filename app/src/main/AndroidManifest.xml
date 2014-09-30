@@ -51,6 +51,7 @@
             android:permission="android.permission.CAPTURE_SECURE_VIDEO_OUTPUT">
             <intent-filter>
                 <action android:name="org.namelessrom.ACTION_STOP_SCREENCAST" />
+                <action android:name="org.namelessrom.ACTION_DELETE_SCREENCAST" />
                 <action android:name="org.namelessrom.SHOW_TOUCHES" />
             </intent-filter>
         </receiver>

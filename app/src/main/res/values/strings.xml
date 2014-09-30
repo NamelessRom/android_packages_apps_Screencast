@@ -22,6 +22,7 @@
     <string name="stop_description">Press \"%s\" to stop the recording of your Android screen and microphone.</string>
     <string name="stop">Stop</string>
     <string name="share">Share</string>
+    <string name="delete">Delete</string>
     <string name="insufficient_storage">Insufficient storage</string>
     <string name="not_enough_storage">Not enough storage available</string>
     <string name="show_touches">Show touches</string>
