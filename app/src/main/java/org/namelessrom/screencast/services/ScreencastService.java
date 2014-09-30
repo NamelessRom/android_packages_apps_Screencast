@@ -308,8 +308,9 @@ public class ScreencastService extends Service {
 
         final Point point = getNativeResolution();
         mRecorder = new RecordingDevice(this, point.x, point.y);
+
         final VirtualDisplay virtualDisplay = mRecorder.registerVirtualDisplay(this,
-                "hidden:screen-recording", point.x, point.y, displayMetrics.densityDpi);
+                "hidden:screen-recording", displayMetrics.densityDpi);
         if (virtualDisplay == null) {
             cleanup();
         }

@@ -33,4 +33,8 @@
     <string name="configure">Configure</string>
     <string name="settings_information">Changes will take effect when starting a new screencast!</string>
     <string name="general">General</string>
+
+    <string name="video">Video</string>
+    <string name="bitrate">Bitrate</string>
+    <string name="framerate">Framerate</string>
 </resources>

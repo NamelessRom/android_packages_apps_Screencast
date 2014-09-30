@@ -49,7 +49,7 @@ public class RecordingDevice extends EncoderDevice {
     private File    mFile;
 
     public RecordingDevice(final Context context, final int width, final int height) {
-        super(width, height);
+        super(context, width, height);
         mContext = context;
 
         final String date = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(

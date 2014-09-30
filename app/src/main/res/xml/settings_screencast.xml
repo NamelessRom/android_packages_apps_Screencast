@@ -33,4 +33,20 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory
+        android:key="video"
+        android:title="@string/video">
+
+        <ListPreference
+            android:key="bitrate"
+            android:title="@string/bitrate"
+            android:persistent="false" />
+
+        <ListPreference
+            android:key="framerate"
+            android:title="@string/framerate"
+            android:persistent="false" />
+
+    </PreferenceCategory>
+
 </PreferenceScreen>

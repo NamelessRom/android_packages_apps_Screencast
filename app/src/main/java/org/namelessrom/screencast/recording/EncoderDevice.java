@@ -25,21 +25,13 @@ import android.hardware.display.VirtualDisplay;
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
 import android.media.MediaFormat;
-import android.sax.Element;
-import android.sax.ElementListener;
-import android.sax.RootElement;
-import android.text.TextUtils;
 import android.view.Surface;
 
 import org.namelessrom.screencast.Logger;
-import org.xml.sax.Attributes;
+import org.namelessrom.screencast.PreferenceHelper;
+import org.namelessrom.screencast.Utils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.StringReader;
 import java.util.ArrayList;
-
-import safesax.Parsers;
 
 public abstract class EncoderDevice {
     final String TAG = getClass().getSimpleName();
@@ -47,10 +39,14 @@ public abstract class EncoderDevice {
     private MediaCodec     mMediaCodec;
     private VirtualDisplay mVirtualDisplay;
 
+    private Context mContext;
+
     private int mWidth;
     private int mHeight;
 
-    public EncoderDevice(final int width, final int height) {
+    public EncoderDevice(final Context context, final int width, final int height) {
+        mContext = context;
+
         mWidth = width;
         mHeight = height;
     }
@@ -77,31 +73,7 @@ public abstract class EncoderDevice {
 
     public Surface createDisplaySurface() {
         try {
-            final ArrayList<VideoEncoderCap> videoEncoderCaps = new ArrayList<VideoEncoderCap>();
-            try {
-                final File mediaProfiles = new File("/system/etc/media_profiles.xml");
-                final FileInputStream fis = new FileInputStream(mediaProfiles);
-                byte[] byteArray = new byte[(int) mediaProfiles.length()];
-                fis.read(byteArray);
-                final String str = new String(byteArray);
-                final RootElement rootElement = new RootElement("MediaSettings");
-                final Element videoElement = rootElement.requireChild("VideoEncoderCap");
-                final ElementListener elementListener = new ElementListener() {
-                    public void end() { }
-
-                    public void start(Attributes attributes) {
-                        if (TextUtils.equals(attributes.getValue("name"), "h264")) {
-                            videoEncoderCaps.add(new EncoderDevice.VideoEncoderCap(attributes));
-                        }
-                    }
-                };
-                videoElement.setElementListener(elementListener);
-
-                final StringReader stringReader = new StringReader(str);
-                Parsers.parse(stringReader, rootElement.getContentHandler());
-            } catch (Exception e) {
-                Logger.e(TAG, "Uhoh", e);
-            }
+            final ArrayList<VideoEncoderCap> videoEncoderCaps = Utils.getVideoEncoderCaps();
 
             final VideoEncoderCap videoEncoderCap;
             if (videoEncoderCaps.size() > 0) {
@@ -110,20 +82,38 @@ public abstract class EncoderDevice {
                 videoEncoderCap = null;
             }
 
-            // TODO: make configurable to reduce screen cast size
             int bitRate = 2000000;
             if (videoEncoderCap != null) {
-                bitRate = videoEncoderCap.maxBitRate;
+                bitRate = PreferenceHelper.get(mContext)
+                        .getInt(PreferenceHelper.PREF_BITRATE, videoEncoderCap.maxBitRate);
+                // cap max bitrate
+                if (bitRate > videoEncoderCap.maxBitRate) {
+                    bitRate = videoEncoderCap.maxBitRate;
+                }
+                // cap min bitrate
+                if (bitRate < videoEncoderCap.minBitRate) {
+                    bitRate = videoEncoderCap.minBitRate;
+                }
+                Logger.i(this, "bitRate -> %s", bitRate);
             }
 
-            // TODO: make configurable
             int frameRate = 30;
             if (videoEncoderCap != null) {
-                frameRate = videoEncoderCap.maxFrameRate;
+                frameRate = PreferenceHelper.get(mContext)
+                        .getInt(PreferenceHelper.PREF_FRAMERATE, videoEncoderCap.maxFrameRate);
+                // cap max framerate
+                if (frameRate > videoEncoderCap.maxFrameRate) {
+                    frameRate = videoEncoderCap.maxFrameRate;
+                }
+                // cap min framerate
+                if (frameRate < videoEncoderCap.minFrameRate) {
+                    frameRate = videoEncoderCap.minFrameRate;
+                }
+                Logger.i(this, "frameRate -> %s", frameRate);
             }
 
-            final MediaFormat mediaFormat = MediaFormat.createVideoFormat(
-                    "video/avc", mWidth, mHeight);
+            final String mime = "video/avc";
+            final MediaFormat mediaFormat = MediaFormat.createVideoFormat(mime, mWidth, mHeight);
             mediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, bitRate);
             mediaFormat.setInteger(MediaFormat.KEY_FRAME_RATE, frameRate);
             mediaFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT,
@@ -132,7 +122,7 @@ public abstract class EncoderDevice {
 
             Logger.i(TAG, "Starting encoder at " + mWidth + "x" + mHeight);
 
-            mMediaCodec = MediaCodec.createEncoderByType("video/avc");
+            mMediaCodec = MediaCodec.createEncoderByType(mime);
             mMediaCodec.configure(mediaFormat, null, null, 1);
 
             final Surface inputSurface = mMediaCodec.createInputSurface();
@@ -154,7 +144,7 @@ public abstract class EncoderDevice {
     protected abstract EncoderRunnable onSurfaceCreated(final MediaCodec codec);
 
     public VirtualDisplay registerVirtualDisplay(final Context ctx, final String displayName,
-            final int width, final int height, final int dpi) {
+            final int dpi) {
         final Surface displaySurface = createDisplaySurface();
         if (displaySurface == null) { return null; }
 
@@ -209,17 +199,4 @@ public abstract class EncoderDevice {
         }
     }
 
-    private static class VideoEncoderCap {
-        final int maxBitRate;
-        final int maxFrameHeight;
-        final int maxFrameWidth;
-        final int maxFrameRate;
-
-        public VideoEncoderCap(final Attributes attributes) {
-            maxFrameWidth = Integer.valueOf(attributes.getValue("maxFrameWidth"));
-            maxFrameHeight = Integer.valueOf(attributes.getValue("maxFrameHeight"));
-            maxBitRate = Integer.valueOf(attributes.getValue("maxBitRate"));
-            maxFrameRate = Integer.valueOf(attributes.getValue("maxFrameRate"));
-        }
-    }
 }
