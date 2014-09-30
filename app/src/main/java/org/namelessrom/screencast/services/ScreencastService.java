@@ -106,7 +106,7 @@ public class ScreencastService extends Service {
             mTimer = new Timer();
             mTimer.scheduleAtFixedRate(new TimerTask() {
                 public void run() {
-                    updateNotification(ScreencastService.this);
+                    updateNotification();
                 }
             }, 100L, 1000L);
 
@@ -147,13 +147,13 @@ public class ScreencastService extends Service {
         return builder;
     }
 
-    private void updateNotification(final Context context) {
+    private void updateNotification() {
         final long delta = System.currentTimeMillis() - mStartTime;
         final SimpleDateFormat localSimpleDateFormat = new SimpleDateFormat("mm:ss");
 
         mBuilder.setContentText("Video Length : " + localSimpleDateFormat.format(new Date(delta)));
 
-        ((NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE))
+        ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE))
                 .notify(0, mBuilder.build());
     }
 
@@ -172,6 +172,8 @@ public class ScreencastService extends Service {
                     getString(R.string.show_touches),
                     PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT));
         }
+
+        updateNotification();
     }
 
 
