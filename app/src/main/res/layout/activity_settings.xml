@@ -15,9 +15,9 @@
    *    You should have received a copy of the GNU General Public License
    *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
-<resources>
-    <item name="button_configure" type="id" />
-    <item name="button_screencast" type="id" />
-    <item name="preference_container" type="id" />
-    <item name="statustext_screencast" type="id" />
-</resources>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@id/preference_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="org.namelessrom.screencast.SettingsActivity" />

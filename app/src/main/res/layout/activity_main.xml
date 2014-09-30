@@ -16,11 +16,13 @@
    *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:gravity="center"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="20dp">
+    android:layout_margin="20dp"
+    tools:context="org.namelessrom.screencast.MainActivity">
 
     <TextView
         android:id="@id/statustext_screencast"
@@ -29,20 +31,28 @@
         android:layout_height="wrap_content"
         android:text="@string/start_description"
         style="@android:style/TextAppearance.Medium"
-        android:fontFamily="sans-serif-condensed"/>
+        android:fontFamily="sans-serif-condensed" />
 
     <LinearLayout
         android:gravity="center_horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp">
+        android:layout_marginTop="20dp"
+        android:orientation="vertical">
 
         <Button
             android:id="@id/button_screencast"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/start_screencast"
-            android:fontFamily="sans-serif-condensed"/>
+            android:fontFamily="sans-serif-condensed" />
+
+        <Button
+            android:id="@id/button_configure"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/configure"
+            android:fontFamily="sans-serif-condensed" />
 
     </LinearLayout>
 </LinearLayout>

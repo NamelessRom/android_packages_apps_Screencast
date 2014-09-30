@@ -15,9 +15,22 @@
    *    You should have received a copy of the GNU General Public License
    *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
-<resources>
-    <item name="button_configure" type="id" />
-    <item name="button_screencast" type="id" />
-    <item name="preference_container" type="id" />
-    <item name="statustext_screencast" type="id" />
-</resources>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <Preference
+        android:key="info"
+        android:summary="@string/settings_information"
+        android:selectable="false" />
+
+    <PreferenceCategory
+        android:title="@string/general"
+        android:key="general">
+
+        <CheckBoxPreference
+            android:key="show_touches"
+            android:title="@string/show_touches"
+            android:defaultValue="true" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

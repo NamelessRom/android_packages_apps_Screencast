@@ -28,4 +28,8 @@
     <string name="recording">Recording&#8230;</string>
     <string name="recording_ready_to_share">Recording ready to share</string>
     <string name="video_length">Video length: %s</string>
+
+    <string name="configure">Configure</string>
+    <string name="settings_information">Changes will take effect when starting a new screencast!</string>
+    <string name="general">General</string>
 </resources>

@@ -33,6 +33,7 @@ import android.os.Environment;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.os.StatFs;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -93,9 +94,15 @@ public class ScreencastService extends Service {
             } catch (Exception e) {
                 Logger.e(TAG, "Failed to register screen caster", e);
             }
+
             mBuilder = createNotificationBuilder();
-            Settings.System.putInt(getContentResolver(), Settings.System.SHOW_TOUCHES, 1);
-            addNotificationTouchButton(true);
+
+            final boolean showTouches = PreferenceManager.getDefaultSharedPreferences(this)
+                    .getBoolean(Settings.System.SHOW_TOUCHES, true);
+            Settings.System.putInt(getContentResolver(), Settings.System.SHOW_TOUCHES,
+                    showTouches ? 1 : 0);
+            addNotificationTouchButton(showTouches);
+
             mTimer = new Timer();
             mTimer.scheduleAtFixedRate(new TimerTask() {
                 public void run() {
