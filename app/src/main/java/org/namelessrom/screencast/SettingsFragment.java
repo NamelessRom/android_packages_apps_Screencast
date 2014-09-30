@@ -37,6 +37,9 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
     private ListPreference mBitrate;
     private ListPreference mFramerate;
 
+    // handled via xml
+    //private CheckBoxPReference mEnableAudio;
+
     @Override public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.settings_screencast);

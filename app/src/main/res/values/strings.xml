@@ -37,4 +37,7 @@
     <string name="video">Video</string>
     <string name="bitrate">Bitrate</string>
     <string name="framerate">Framerate</string>
+
+    <string name="audio">Audio</string>
+    <string name="enable_audio">Enable audio</string>
 </resources>

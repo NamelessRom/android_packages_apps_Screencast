@@ -28,6 +28,8 @@ public class PreferenceHelper {
     public static final String PREF_BITRATE   = "bitrate";
     public static final String PREF_FRAMERATE = "framerate";
 
+    public static final String PREF_ENABLE_AUDIO = "enable_audio";
+
     private static PreferenceHelper  sInstance;
     private static SharedPreferences sPrefs;
 
@@ -53,5 +55,9 @@ public class PreferenceHelper {
 
     public void setInt(final String name, final int value) {
         sPrefs.edit().putString(name, String.valueOf(value)).apply();
+    }
+
+    public boolean getBoolean(final String name, final boolean def) {
+        return sPrefs.getBoolean(name, def);
     }
 }

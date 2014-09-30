@@ -32,6 +32,7 @@ import android.net.Uri;
 import android.os.Environment;
 
 import org.namelessrom.screencast.Logger;
+import org.namelessrom.screencast.PreferenceHelper;
 
 import java.io.File;
 import java.nio.ByteBuffer;
@@ -70,7 +71,8 @@ public class RecordingDevice extends EncoderDevice {
 
         Semaphore  muxWaiter;
         MediaMuxer muxer;
-        int        track;
+
+        int track;
 
         public AudioMuxer(final RecordingDevice.AudioRecorder audio, final MediaMuxer mediaMuxer,
                 final Semaphore semaphore) {
@@ -207,6 +209,9 @@ public class RecordingDevice extends EncoderDevice {
             Thread audioMuxerThread = null;
             ByteBuffer[] outputBuffers = this.mediaCodec.getOutputBuffers();
 
+            final boolean withAudio = PreferenceHelper.get(mContext)
+                    .getBoolean(PreferenceHelper.PREF_ENABLE_AUDIO, true);
+
             final long start = System.nanoTime();
             while (true) {
                 final MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
@@ -238,26 +243,34 @@ public class RecordingDevice extends EncoderDevice {
                     Logger.d("RecordingDevice", "encoder output format changed: " + mediaFormat);
                     trackIndex = mediaMuxer.addTrack(mediaFormat);
 
-                    final RecordingDevice.AudioRecorder audioRecorder =
-                            new RecordingDevice.AudioRecorder(this);
-                    final Semaphore semaphore = new Semaphore(0);
-                    final RecordingDevice.AudioMuxer audioMuxer =
-                            new RecordingDevice.AudioMuxer(audioRecorder, mediaMuxer, semaphore);
                     formatStatus = 1;
 
-                    Thread audioRecorderThread = new Thread(audioRecorder, "AudioRecorder");
-                    audioRecorderThread.start();
+                    if (withAudio) {
+                        final RecordingDevice.AudioRecorder audioRec =
+                                new RecordingDevice.AudioRecorder(this);
+                        final Semaphore semaphore = new Semaphore(0);
+                        final RecordingDevice.AudioMuxer audioMuxer =
+                                new RecordingDevice.AudioMuxer(audioRec, mediaMuxer, semaphore);
 
-                    audioMuxerThread = new Thread(audioMuxer, "AudioMuxer");
-                    audioMuxerThread.start();
-                    semaphore.acquire();
+                        final Thread audioRecorderThread = new Thread(audioRec, "AudioRecorder");
+                        audioRecorderThread.start();
+
+                        audioMuxerThread = new Thread(audioMuxer, "AudioMuxer");
+                        audioMuxerThread.start();
+                        semaphore.acquire();
+                    } else {
+                        mediaMuxer.start();
+                    }
+
                     Logger.i("RecordingDevice", "Muxing");
                 }
             }
             this.doneCoding = true;
             Logger.i("RecordingDevice", "Done recording");
 
-            audioMuxerThread.join();
+            if (audioMuxerThread != null) {
+                audioMuxerThread.join();
+            }
             mediaMuxer.stop();
 
             final String[] scanPaths = new String[]{RecordingDevice.this.mFile.getAbsolutePath()};
