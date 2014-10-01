@@ -25,6 +25,7 @@ import android.hardware.display.VirtualDisplay;
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
 import android.media.MediaFormat;
+import android.util.DisplayMetrics;
 import android.view.Surface;
 
 import org.namelessrom.screencast.Logger;
@@ -34,15 +35,15 @@ import org.namelessrom.screencast.Utils;
 import java.util.ArrayList;
 
 public abstract class EncoderDevice {
-    final String TAG = getClass().getSimpleName();
+    private static final String VIRTUAL_DISPLAY_NAME = "hidden:screen-recording";
+
+    private final Context mContext;
+
+    private final int mWidth;
+    private final int mHeight;
 
     private MediaCodec     mMediaCodec;
     private VirtualDisplay mVirtualDisplay;
-
-    private Context mContext;
-
-    private int mWidth;
-    private int mHeight;
 
     public EncoderDevice(final Context context, final int width, final int height) {
         mContext = context;
@@ -52,125 +53,110 @@ public abstract class EncoderDevice {
     }
 
     private void destroyDisplaySurface(final MediaCodec codec) {
-        try {
-            if (codec != null) {
-                codec.stop();
-                codec.release();
-            }
+        if (codec != null) {
+            codec.stop();
+            codec.release();
+        }
 
-            if (mMediaCodec == codec) {
-                mMediaCodec = null;
-            }
+        if (mMediaCodec == codec) {
+            mMediaCodec = null;
+        }
 
-            if (mVirtualDisplay != null) {
-                mVirtualDisplay.release();
-                mVirtualDisplay = null;
-            }
-        } catch (Exception e) {
-            Logger.e(TAG, "Error destroying display surface", e);
+        if (mVirtualDisplay != null) {
+            mVirtualDisplay.release();
+            mVirtualDisplay = null;
         }
     }
 
     public Surface createDisplaySurface() {
-        try {
-            final ArrayList<VideoEncoderCap> videoEncoderCaps = Utils.getVideoEncoderCaps();
+        final ArrayList<VideoEncoderCap> videoEncoderCaps = Utils.getVideoEncoderCaps();
 
-            final VideoEncoderCap videoEncoderCap;
-            if (videoEncoderCaps.size() > 0) {
-                videoEncoderCap = videoEncoderCaps.get(0);
-            } else {
-                videoEncoderCap = null;
-            }
-
-            int bitRate = 2000000;
-            if (videoEncoderCap != null) {
-                bitRate = PreferenceHelper.get(mContext)
-                        .getInt(PreferenceHelper.PREF_BITRATE, videoEncoderCap.maxBitRate);
-                // cap max bitrate
-                if (bitRate > videoEncoderCap.maxBitRate) {
-                    bitRate = videoEncoderCap.maxBitRate;
-                }
-                // cap min bitrate
-                if (bitRate < videoEncoderCap.minBitRate) {
-                    bitRate = videoEncoderCap.minBitRate;
-                }
-                Logger.i(this, "bitRate -> %s", bitRate);
-            }
-
-            int frameRate = 30;
-            if (videoEncoderCap != null) {
-                frameRate = PreferenceHelper.get(mContext)
-                        .getInt(PreferenceHelper.PREF_FRAMERATE, videoEncoderCap.maxFrameRate);
-                // cap max framerate
-                if (frameRate > videoEncoderCap.maxFrameRate) {
-                    frameRate = videoEncoderCap.maxFrameRate;
-                }
-                // cap min framerate
-                if (frameRate < videoEncoderCap.minFrameRate) {
-                    frameRate = videoEncoderCap.minFrameRate;
-                }
-                Logger.i(this, "frameRate -> %s", frameRate);
-            }
-
-            final String mime = "video/avc";
-            final MediaFormat mediaFormat = MediaFormat.createVideoFormat(mime, mWidth, mHeight);
-            mediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, bitRate);
-            mediaFormat.setInteger(MediaFormat.KEY_FRAME_RATE, frameRate);
-            mediaFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT,
-                    MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
-            mediaFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 3);
-
-            Logger.i(TAG, "Starting encoder at " + mWidth + "x" + mHeight);
-
-            mMediaCodec = MediaCodec.createEncoderByType(mime);
-            mMediaCodec.configure(mediaFormat, null, null, 1);
-
-            final Surface inputSurface = mMediaCodec.createInputSurface();
-
-            mMediaCodec.start();
-
-            final EncoderRunnable encoderRunnable = onSurfaceCreated(mMediaCodec);
-            final Thread encoderThread = new Thread(encoderRunnable, "Encoder");
-            encoderThread.start();
-
-            return inputSurface;
-        } catch (Exception e) {
-            Logger.e(TAG, "error creating surface", e);
+        final VideoEncoderCap videoEncoderCap;
+        if (videoEncoderCaps.size() > 0) {
+            videoEncoderCap = videoEncoderCaps.get(0);
+        } else {
+            videoEncoderCap = null;
         }
 
-        return null;
+        int bitRate = 2000000;
+        if (videoEncoderCap != null) {
+            bitRate = PreferenceHelper.get(mContext)
+                    .getInt(PreferenceHelper.PREF_BITRATE, videoEncoderCap.maxBitRate);
+            // cap max bitrate
+            if (bitRate > videoEncoderCap.maxBitRate) {
+                bitRate = videoEncoderCap.maxBitRate;
+            }
+            // cap min bitrate
+            if (bitRate < videoEncoderCap.minBitRate) {
+                bitRate = videoEncoderCap.minBitRate;
+            }
+            Logger.i(this, "bitRate -> %s", bitRate);
+        }
+
+        int frameRate = 30;
+        if (videoEncoderCap != null) {
+            frameRate = PreferenceHelper.get(mContext)
+                    .getInt(PreferenceHelper.PREF_FRAMERATE, videoEncoderCap.maxFrameRate);
+            // cap max framerate
+            if (frameRate > videoEncoderCap.maxFrameRate) {
+                frameRate = videoEncoderCap.maxFrameRate;
+            }
+            // cap min framerate
+            if (frameRate < videoEncoderCap.minFrameRate) {
+                frameRate = videoEncoderCap.minFrameRate;
+            }
+            Logger.i(this, "frameRate -> %s", frameRate);
+        }
+
+        final String mime = "video/avc";
+        final MediaFormat mediaFormat = MediaFormat.createVideoFormat(mime, mWidth, mHeight);
+        mediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, bitRate);
+        mediaFormat.setInteger(MediaFormat.KEY_FRAME_RATE, frameRate);
+        mediaFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT,
+                MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
+        mediaFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 3);
+
+        Logger.i(this, String.format("Starting encoder at %sx%s", mWidth, mHeight));
+
+        mMediaCodec = MediaCodec.createEncoderByType(mime);
+        mMediaCodec.configure(mediaFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
+
+        final Surface inputSurface = mMediaCodec.createInputSurface();
+
+        mMediaCodec.start();
+
+        final EncoderRunnable encoderRunnable = onSurfaceCreated(mMediaCodec);
+        final Thread encoderThread = new Thread(encoderRunnable, "Encoder");
+        encoderThread.start();
+
+        return inputSurface;
     }
 
     protected abstract EncoderRunnable onSurfaceCreated(final MediaCodec codec);
 
-    public VirtualDisplay registerVirtualDisplay(final Context ctx, final String displayName,
-            final int dpi) {
+    public VirtualDisplay registerVirtualDisplay(final Context ctx, final DisplayMetrics metrics) {
         final Surface displaySurface = createDisplaySurface();
         if (displaySurface == null) { return null; }
 
         final DisplayManager dm = (DisplayManager) ctx.getSystemService(Context.DISPLAY_SERVICE);
         final int displayFlags = DisplayManager.VIRTUAL_DISPLAY_FLAG_SECURE |
                 DisplayManager.VIRTUAL_DISPLAY_FLAG_PUBLIC;
-        final VirtualDisplay virtualDisplay = dm.createVirtualDisplay(
-                displayName, this.mWidth, this.mHeight, dpi, displaySurface, displayFlags);
-        Logger.i(TAG, String.format("Created virtual display (%s)", displayFlags));
+        final VirtualDisplay virtualDisplay = dm.createVirtualDisplay(VIRTUAL_DISPLAY_NAME,
+                mWidth, mHeight, metrics.densityDpi, displaySurface, displayFlags);
+        Logger.i(this, String.format("Created virtual display (%s)", displayFlags));
         mVirtualDisplay = virtualDisplay;
 
         return virtualDisplay;
     }
 
     public void stop() {
-        try {
-            if (mMediaCodec != null) {
-                mMediaCodec.signalEndOfInputStream();
-                mMediaCodec = null;
-            }
-            if (mVirtualDisplay != null) {
-                mVirtualDisplay.release();
-                mVirtualDisplay = null;
-            }
-        } catch (Exception e) {
-            Logger.e(TAG, "Stop", e);
+        if (mMediaCodec != null) {
+            mMediaCodec.signalEndOfInputStream();
+            mMediaCodec = null;
+        }
+        if (mVirtualDisplay != null) {
+            mVirtualDisplay.release();
+            mVirtualDisplay = null;
         }
     }
 
@@ -192,9 +178,9 @@ public abstract class EncoderDevice {
             try {
                 encode();
                 cleanup();
-                Logger.i(EncoderDevice.this.TAG, "=======ENCODING COMPELTE=======");
+                Logger.i(EncoderDevice.this, "=======ENCODING COMPELTE=======");
             } catch (Exception e) {
-                Logger.e(EncoderDevice.this.TAG, "Encoder error", e);
+                Logger.e(EncoderDevice.this, "Encoder error", e);
             }
         }
     }

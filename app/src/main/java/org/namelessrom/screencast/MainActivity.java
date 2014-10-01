@@ -31,7 +31,6 @@ import org.namelessrom.screencast.services.ScreencastService;
 public class MainActivity extends Activity {
 
     private Button mScreencastButton;
-    private Button mConfigureButton;
 
     private TextView mStatusText;
 
@@ -61,8 +60,8 @@ public class MainActivity extends Activity {
             }
         });
 
-        mConfigureButton = ((Button) findViewById(R.id.button_configure));
-        mConfigureButton.setOnClickListener(new View.OnClickListener() {
+        final Button configureButton = ((Button) findViewById(R.id.button_configure));
+        configureButton.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View view) {
                 final Intent i = new Intent();
                 i.setClass(MainActivity.this, SettingsActivity.class);

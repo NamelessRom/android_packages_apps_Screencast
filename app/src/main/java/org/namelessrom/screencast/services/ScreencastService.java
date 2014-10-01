@@ -31,7 +31,6 @@ import android.hardware.display.VirtualDisplay;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.IBinder;
-import android.os.RemoteException;
 import android.os.StatFs;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
@@ -299,18 +298,17 @@ public class ScreencastService extends Service {
         return point;
     }
 
-    private void registerScreencaster() throws RemoteException {
+    private void registerScreencaster() {
         final Display display =
                 ((DisplayManager) getSystemService(Context.DISPLAY_SERVICE)).getDisplay(0);
 
-        final DisplayMetrics displayMetrics = new DisplayMetrics();
-        display.getMetrics(displayMetrics);
+        final DisplayMetrics metrics = new DisplayMetrics();
+        display.getMetrics(metrics);
 
         final Point point = getNativeResolution();
         mRecorder = new RecordingDevice(this, point.x, point.y);
 
-        final VirtualDisplay virtualDisplay = mRecorder.registerVirtualDisplay(this,
-                "hidden:screen-recording", displayMetrics.densityDpi);
+        final VirtualDisplay virtualDisplay = mRecorder.registerVirtualDisplay(this, metrics);
         if (virtualDisplay == null) {
             cleanup();
         }

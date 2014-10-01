@@ -104,7 +104,7 @@ public class Logger {
         if (DEBUG) Log.wtf(getTag(object), getMessage(msg), exception);
     }
 
-    public static String getTag(final Object object) {
+    private static String getTag(final Object object) {
         if (object instanceof String) {
             return ((String) object);
         } else {
@@ -112,11 +112,11 @@ public class Logger {
         }
     }
 
-    public static String getMessage(final String msg) {
+    private static String getMessage(final String msg) {
         return String.format("--> %s", msg);
     }
 
-    public static String getMessage(final String msg, final Object... objects) {
+    private static String getMessage(final String msg, final Object... objects) {
         return String.format("--> %s", String.format(msg, objects));
     }
 
