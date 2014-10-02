@@ -18,4 +18,5 @@
   -->
 <resources>
   <string name="stop">Parar</string>
+  <string name="general">Geral</string>
 </resources>

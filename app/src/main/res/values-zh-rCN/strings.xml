@@ -18,4 +18,5 @@
   -->
 <resources>
   <string name="stop">停止</string>
+  <string name="general">常规</string>
 </resources>

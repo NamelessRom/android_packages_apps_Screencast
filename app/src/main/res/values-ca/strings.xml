@@ -18,4 +18,5 @@
   -->
 <resources>
   <string name="stop">Aturar</string>
+  <string name="general">General</string>
 </resources>

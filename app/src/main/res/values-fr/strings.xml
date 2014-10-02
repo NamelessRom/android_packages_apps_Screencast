@@ -18,4 +18,5 @@
   -->
 <resources>
   <string name="stop">Arrêt</string>
+  <string name="general">Général</string>
 </resources>
