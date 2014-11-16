@@ -21,7 +21,6 @@ LOCAL_MODULE_TAGS := optional
 
 LOCAL_SRC_FILES    := $(call all-java-files-under, java)
 
-LOCAL_ASSET_DIR    := $(LOCAL_PATH)/assets
 LOCAL_RESOURCE_DIR := $(LOCAL_PATH)/res
 
 LOCAL_PROGUARD_FLAG_FILES := proguard.flags
