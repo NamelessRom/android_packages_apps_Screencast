@@ -35,6 +35,7 @@ import org.namelessrom.screencast.Logger;
 import org.namelessrom.screencast.PreferenceHelper;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -46,7 +47,7 @@ public class RecordingDevice extends EncoderDevice {
             "Screencasts");
 
     private final Context mContext;
-    private final File    mFile;
+    private final File mFile;
 
     public RecordingDevice(final Context context, final int width, final int height) {
         super(context, width, height);
@@ -68,7 +69,7 @@ public class RecordingDevice extends EncoderDevice {
     private class AudioMuxer implements Runnable {
         private final RecordingDevice.AudioRecorder recorder;
 
-        private final Semaphore  muxWaiter;
+        private final Semaphore muxWaiter;
         private final MediaMuxer muxer;
 
         private int track;
@@ -127,16 +128,15 @@ public class RecordingDevice extends EncoderDevice {
     private class AudioRecorder implements Runnable {
         private static final String MIME = "audio/mp4a-latm";
 
-        private final MediaCodec  codec  = MediaCodec.createEncoderByType(MIME);
-        private final MediaFormat format = new MediaFormat();
-
         private final RecordingDevice.Recorder recorder;
 
+        private final MediaCodec codec;
         private AudioRecord record;
 
-        public AudioRecorder(final RecordingDevice.Recorder recorder) {
+        public AudioRecorder(final RecordingDevice.Recorder recorder) throws IOException {
             this.recorder = recorder;
 
+            final MediaFormat format = new MediaFormat();
             format.setString(MediaFormat.KEY_MIME, MIME);
             format.setInteger(MediaFormat.KEY_BIT_RATE, 64 * 1024);
             format.setInteger(MediaFormat.KEY_CHANNEL_COUNT, 1);
@@ -144,6 +144,7 @@ public class RecordingDevice extends EncoderDevice {
             format.setInteger(MediaFormat.KEY_AAC_PROFILE,
                     MediaCodecInfo.CodecProfileLevel.AACObjectHE);
 
+            codec = MediaCodec.createEncoderByType(MIME);
             codec.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
             codec.start();
 
@@ -251,8 +252,13 @@ public class RecordingDevice extends EncoderDevice {
                     formatStatus = 1;
 
                     if (withAudio) {
-                        final RecordingDevice.AudioRecorder audioRec =
-                                new RecordingDevice.AudioRecorder(this);
+                        final RecordingDevice.AudioRecorder audioRec;
+                        try {
+                            audioRec = new RecordingDevice.AudioRecorder(this);
+                        } catch (IOException io) {
+                            Logger.e(this, "could not create audio recorder!");
+                            return;
+                        }
                         final Semaphore semaphore = new Semaphore(0);
                         final RecordingDevice.AudioMuxer audioMuxer =
                                 new RecordingDevice.AudioMuxer(audioRec, mediaMuxer, semaphore);
@@ -279,7 +285,7 @@ public class RecordingDevice extends EncoderDevice {
             }
             mediaMuxer.stop();
 
-            final String[] scanPaths = new String[]{mFile.getAbsolutePath()};
+            final String[] scanPaths = new String[]{ mFile.getAbsolutePath() };
             MediaScannerConnection.scanFile(mContext, scanPaths, null,
                     new MediaScannerConnection.OnScanCompletedListener() {
                         public void onScanCompleted(final String path, final Uri uri) {

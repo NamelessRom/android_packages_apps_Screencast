@@ -32,6 +32,7 @@ import org.namelessrom.screencast.Logger;
 import org.namelessrom.screencast.PreferenceHelper;
 import org.namelessrom.screencast.Utils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public abstract class EncoderDevice {
@@ -118,7 +119,11 @@ public abstract class EncoderDevice {
 
         Logger.i(this, String.format("Starting encoder at %sx%s", mWidth, mHeight));
 
-        mMediaCodec = MediaCodec.createEncoderByType(mime);
+        try {
+            mMediaCodec = MediaCodec.createEncoderByType(mime);
+        } catch (IOException io) {
+            Logger.e(this, "could not create media codec!", io);
+        }
         mMediaCodec.configure(mediaFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
 
         final Surface inputSurface = mMediaCodec.createInputSurface();
