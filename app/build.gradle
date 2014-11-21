@@ -1,17 +1,27 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 319
+    compileSdkVersion 321
     buildToolsVersion "21.1.1"
 
     defaultConfig {
-        minSdkVersion 19
-        targetSdkVersion 319
+        minSdkVersion 21
+        targetSdkVersion 321
     }
     buildTypes {
         release {
-            runProguard false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFile 'src/main/proguard-rules.pro'
+            minifyEnabled true
+            shrinkResources false
+            zipAlignEnabled true
+        }
+        debug {
+            proguardFile 'src/main/proguard-rules.pro'
+            minifyEnabled true
+            shrinkResources false
+            zipAlignEnabled true
+            applicationIdSuffix '.dev'
+            versionNameSuffix '-dev'
         }
     }
 }
