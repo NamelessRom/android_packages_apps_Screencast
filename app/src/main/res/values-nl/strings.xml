@@ -17,6 +17,25 @@
    *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <resources>
+  <string name="app_name">Schermopname</string>
+  <string name="start_description">Druk op \"%s\" om te beginnen met het opnemen van uw scherm en microfoon.</string>
+  <string name="start_screencast">Begin schermopname</string>
+  <string name="stop_description">Druk op \"%s\" om te stoppen met de opname van uw scherm en microfoon.</string>
   <string name="stop">Stop</string>
+  <string name="share">Delen</string>
+  <string name="delete">Verwijder</string>
+  <string name="insufficient_storage">Onvoldoende opslagruimte</string>
+  <string name="not_enough_storage">Onvoldoende opslagruimte beschikbaar</string>
+  <string name="show_touches">Laat aanrakingen zien</string>
+  <string name="recording">Opnemen&#8230;</string>
+  <string name="recording_ready_to_share">Opname klaar om te delen</string>
+  <string name="video_length">Videolengte: %s</string>
+  <string name="configure">Configureren</string>
+  <string name="settings_information">De veranderingen zullen toegepast worden bij een nieuwe schermopname!</string>
   <string name="general">Algemeen</string>
+  <string name="video">Video</string>
+  <string name="bitrate">Bitrate</string>
+  <string name="framerate">Framerate</string>
+  <string name="audio">Geluid</string>
+  <string name="enable_audio">Geluid inschakelen</string>
 </resources>

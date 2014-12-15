@@ -17,17 +17,14 @@
    *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <resources>
-  <string name="app_name">Screencast</string>
   <string name="start_description">Naciśnij \"%s\" aby rozpocząć nagrywanie wideo i dźwięku.</string>
-  <string name="start_screencast">Start Screencast</string>
   <string name="stop_description">Naciśnij \"%s\" aby zakończyć nagrywanie ekranu i dźwięku.</string>
-  <string name="stop">Zatrzymaj</string>
   <string name="share">Udostępnij</string>
   <string name="delete">Usuń</string>
   <string name="insufficient_storage">Za mało pamięci</string>
   <string name="not_enough_storage">Za mało dostępnej pamięci</string>
   <string name="show_touches">Pokaż dotknięcia</string>
-  <string name="recording">Nagrywanie...</string>
+  <string name="recording">Nagrywanie&#8230;</string>
   <string name="recording_ready_to_share">Nagranie gotowe do udostępnienia</string>
   <string name="video_length">Długość wideo: %s</string>
   <string name="configure">Konfiguracja</string>
@@ -36,6 +33,5 @@
   <string name="video">Wideo</string>
   <string name="bitrate">Bitrate</string>
   <string name="framerate">Ilość klatek na sekundę</string>
-  <string name="audio">Audio</string>
   <string name="enable_audio">Włącz dźwięk</string>
 </resources>

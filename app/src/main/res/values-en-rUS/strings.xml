@@ -18,24 +18,24 @@
   -->
 <resources>
   <string name="app_name">Screencast</string>
-  <string name="start_description">Premi \"%s\" per iniziare a registrare un video del tuo schermo android con il microfono.</string>
-  <string name="start_screencast">Avvia screencast</string>
-  <string name="stop_description">Premi \"%s\" per fermare la registrazione del tuo schermo e del microfono.</string>
+  <string name="start_description">Press \"%s\" to begin recording a video of your Android screen and microphone.</string>
+  <string name="start_screencast">Start screencast</string>
+  <string name="stop_description">Press \"%s\" to stop the recording of your Android screen and microphone.</string>
   <string name="stop">Stop</string>
-  <string name="share">Condividi</string>
-  <string name="delete">Elimina</string>
-  <string name="insufficient_storage">Spazio di archiviazione insufficiente</string>
-  <string name="not_enough_storage">Non è disponibile spazio di archiviazione a sufficienza</string>
-  <string name="show_touches">Visualizza tocchi</string>
-  <string name="recording">Registrazione&#8230;</string>
-  <string name="recording_ready_to_share">Registrazione pronta per la condivisione</string>
-  <string name="video_length">Durata del video: %s</string>
-  <string name="configure">Configura</string>
-  <string name="settings_information">Le modifiche avranno effetto quando inizierà un nuovo screencast!</string>
-  <string name="general">Generale</string>
+  <string name="share">Share</string>
+  <string name="delete">Delete</string>
+  <string name="insufficient_storage">Insufficient storage</string>
+  <string name="not_enough_storage">Not enough storage available</string>
+  <string name="show_touches">Show touches</string>
+  <string name="recording">Recording&#8230;</string>
+  <string name="recording_ready_to_share">Recording ready to share</string>
+  <string name="video_length">Video length: %s</string>
+  <string name="configure">Configure</string>
+  <string name="settings_information">Changes will take effect when starting a new screencast!</string>
+  <string name="general">General</string>
   <string name="video">Video</string>
   <string name="bitrate">Bitrate</string>
   <string name="framerate">Framerate</string>
   <string name="audio">Audio</string>
-  <string name="enable_audio">Attiva audio</string>
+  <string name="enable_audio">Enable audio</string>
 </resources>

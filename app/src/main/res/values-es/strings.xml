@@ -17,6 +17,5 @@
    *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <resources>
-  <string name="stop">Parar</string>
   <string name="general">General</string>
 </resources>

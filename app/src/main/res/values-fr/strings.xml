@@ -17,5 +17,23 @@
    *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <resources>
+  <string name="app_name">Projection d\'écran</string>
+  <string name="start_description">Appuyez sur \"%s\" pour commencer l\'enregistrement de votre écran et microphone Android.</string>
+  <string name="start_screencast">Commencer à projeter l\'écran</string>
+  <string name="stop_description">Appuyez sur \"%s\" pour arrêter l\'enregistrement de votre écran et microphone Android.</string>
+  <string name="stop">Stop</string>
+  <string name="share">Partager</string>
+  <string name="delete">Effacer</string>
+  <string name="show_touches">Montrer les gestes</string>
+  <string name="recording">Enregistrement&#8230;</string>
+  <string name="recording_ready_to_share">Enregistrement prêt à être partagé</string>
+  <string name="video_length">Durée de la vidéo: %s</string>
+  <string name="configure">Configurer</string>
+  <string name="settings_information">Les changements prendront effet lors d\'une nouvelle projection d\'écran!</string>
   <string name="general">Général</string>
+  <string name="video">Vidéo</string>
+  <string name="bitrate">Bitrate</string>
+  <string name="framerate">Framerate</string>
+  <string name="audio">Audio</string>
+  <string name="enable_audio">Permettre l\'audio</string>
 </resources>
