@@ -24,6 +24,7 @@
   <string name="stop">Stop</string>
   <string name="share">Partager</string>
   <string name="delete">Effacer</string>
+  <string name="not_enough_storage">Espace de stockage insuffisant</string>
   <string name="show_touches">Montrer les gestes</string>
   <string name="recording">Enregistrement&#8230;</string>
   <string name="recording_ready_to_share">Enregistrement prêt à être partagé</string>
