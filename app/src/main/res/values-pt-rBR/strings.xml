@@ -17,9 +17,9 @@
    *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <resources>
-  <string name="app_name">Screencast</string>
+  <string name="app_name">Projetor do ecrã</string>
   <string name="start_description">Pressione \"%s\" para começar a gravar um vídeo do ecrã e microfone do seu Android.</string>
-  <string name="start_screencast">Iniciar Screencast</string>
+  <string name="start_screencast">Iniciar Projetor de ecrã</string>
   <string name="stop_description">Pressione \"%s\" para parar a gravação de ecrã e microfone do seu Android.</string>
   <string name="stop">Parar</string>
   <string name="share">Partilhar</string>
@@ -34,7 +34,7 @@
   <string name="settings_information">As alterações terão efeito quando se iniciar um novo screencast!</string>
   <string name="general">Geral</string>
   <string name="video">Vídeo</string>
-  <string name="bitrate">Bitrate</string>
+  <string name="bitrate">Taxa de Bits (Bitrate)</string>
   <string name="framerate">Framerate</string>
   <string name="audio">Áudio</string>
   <string name="enable_audio">Ativar o áudio</string>

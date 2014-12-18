@@ -17,5 +17,25 @@
    *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <resources>
+  <string name="app_name">屏幕录制</string>
+  <string name="start_description">按 \"%s\" 键开始录制屏幕和声音</string>
+  <string name="start_screencast">开始屏幕录制</string>
+  <string name="stop_description">按 \"%s\" 键停止录制屏幕和声音</string>
+  <string name="stop">停止</string>
+  <string name="share">分享</string>
+  <string name="delete">删除</string>
+  <string name="insufficient_storage">存储空间不足</string>
+  <string name="not_enough_storage">可用存储空间不足</string>
+  <string name="show_touches">显示触摸操作</string>
+  <string name="recording">正在录制中...</string>
+  <string name="recording_ready_to_share">录制内容已准备好分享</string>
+  <string name="video_length">视频长度: %s</string>
+  <string name="configure">配置</string>
+  <string name="settings_information">更改会在下一次开启屏幕录制时生效！</string>
   <string name="general">常规</string>
+  <string name="video">视频</string>
+  <string name="bitrate">比特率</string>
+  <string name="framerate">帧率</string>
+  <string name="audio">音效</string>
+  <string name="enable_audio">启用音效</string>
 </resources>
