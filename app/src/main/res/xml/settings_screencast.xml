@@ -26,7 +26,7 @@
         android:title="@string/general"
         android:key="general">
 
-        <CheckBoxPreference
+        <SwitchPreference
             android:key="show_touches"
             android:title="@string/show_touches"
             android:defaultValue="true" />
@@ -53,12 +53,12 @@
         android:key="audio"
         android:title="@string/audio">
 
-        <CheckBoxPreference
+        <SwitchPreference
             android:key="enable_audio"
             android:title="@string/enable_audio"
             android:defaultValue="true" />
 
-        <CheckBoxPreference
+        <SwitchPreference
             android:key="enable_noise_suppression"
             android:title="@string/noise_suppression"
             android:dependency="enable_audio"
