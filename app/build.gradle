@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 321
-    buildToolsVersion "21.1.1"
+    buildToolsVersion "21.1.2"
 
     defaultConfig {
         minSdkVersion 21
@@ -12,13 +12,13 @@ android {
         release {
             proguardFile 'src/main/proguard-rules.pro'
             minifyEnabled true
-            shrinkResources false
+            shrinkResources true
             zipAlignEnabled true
         }
         debug {
             proguardFile 'src/main/proguard-rules.pro'
             minifyEnabled true
-            shrinkResources false
+            shrinkResources true
             zipAlignEnabled true
             applicationIdSuffix '.dev'
             versionNameSuffix '-dev'
