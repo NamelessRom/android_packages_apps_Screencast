@@ -43,7 +43,7 @@ public abstract class EncoderDevice {
     private final int mWidth;
     private final int mHeight;
 
-    private MediaCodec     mMediaCodec;
+    private MediaCodec mMediaCodec;
     private VirtualDisplay mVirtualDisplay;
 
     public EncoderDevice(final Context context, final int width, final int height) {

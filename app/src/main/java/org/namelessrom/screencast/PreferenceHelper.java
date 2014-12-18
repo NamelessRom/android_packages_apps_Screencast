@@ -24,14 +24,13 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 public class PreferenceHelper {
-
-    public static final String PREF_BITRATE   = "bitrate";
+    public static final String PREF_BITRATE = "bitrate";
     public static final String PREF_FRAMERATE = "framerate";
 
     public static final String PREF_ENABLE_AUDIO = "enable_audio";
     public static final String PREF_ENABLE_NOISE_SUPPRESSION = "enable_noise_suppression";
 
-    private static PreferenceHelper  sInstance;
+    private static PreferenceHelper sInstance;
     private static SharedPreferences sPrefs;
 
     private PreferenceHelper(final Context context) {

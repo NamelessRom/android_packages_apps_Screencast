@@ -118,9 +118,9 @@ public class RecordingDevice extends EncoderDevice {
             try {
                 encode();
             } catch (Exception exc) {
-                Logger.e("RecordingDevice", "Audio Muxer error", exc);
+                Logger.e(this, "Audio Muxer error", exc);
             } finally {
-                Logger.i("RecordingDevice", "AudioMuxer done");
+                Logger.i(this, "AudioMuxer done");
                 muxWaiter.release();
             }
         }
@@ -154,7 +154,7 @@ public class RecordingDevice extends EncoderDevice {
             // TODO: remote submix?
             final int minBuffer = AudioRecord.getMinBufferSize(44100, AudioFormat.CHANNEL_IN_MONO,
                     AudioFormat.ENCODING_PCM_16BIT);
-            Logger.i("RecordingDevice", "AudioRecorder init: " + String.valueOf(minBuffer));
+            Logger.i(this, "AudioRecorder init: %s", String.valueOf(minBuffer));
             record = new AudioRecord(MediaRecorder.AudioSource.MIC, 44100,
                     AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, minBuffer);
 
@@ -164,8 +164,10 @@ public class RecordingDevice extends EncoderDevice {
                 final boolean useNoiseSuppression = PreferenceHelper.get(mContext)
                         .getBoolean(PreferenceHelper.PREF_ENABLE_NOISE_SUPPRESSION, false);
                 if (useNoiseSuppression) {
+                    Logger.i(this, "Setting up noise suppression...");
                     noiseSuppressor = NoiseSuppressor.create(record.getAudioSessionId());
                     noiseSuppressor.setEnabled(true);
+                    Logger.i(this, "Enabled noise suppression");
                 }
             }
         }
@@ -201,9 +203,9 @@ public class RecordingDevice extends EncoderDevice {
                     noiseSuppressor.release();
                     noiseSuppressor = null;
                 }
-                Logger.i("RecordingDevice", "=======RECORDING COMPLETE=======");
+                Logger.i(this, "=======RECORDING COMPLETE=======");
             } catch (Exception e) {
-                Logger.e("RecordingDevice", "Recorder error", e);
+                Logger.e(this, "Recorder error", e);
             }
         }
 
@@ -241,9 +243,9 @@ public class RecordingDevice extends EncoderDevice {
             while (true) {
                 status = mediaCodec.dequeueOutputBuffer(bufferInfo, -1L);
                 if (status >= 0) {
-                    Logger.i("RecordingDevice", "Dequeued buffer " + bufferInfo.presentationTimeUs);
+                    Logger.i(this, "Dequeued buffer %s", bufferInfo.presentationTimeUs);
                     if ((MediaCodec.BUFFER_FLAG_CODEC_CONFIG & bufferInfo.flags) != 0) {
-                        Logger.d("RecordingDevice", "ignoring BUFFER_FLAG_CODEC_CONFIG");
+                        Logger.d(this, "ignoring BUFFER_FLAG_CODEC_CONFIG");
                         bufferInfo.size = 0;
                     }
 
@@ -264,7 +266,7 @@ public class RecordingDevice extends EncoderDevice {
                     if (formatStatus != 0) { throw new RuntimeException("format changed twice"); }
 
                     final MediaFormat mediaFormat = mediaCodec.getOutputFormat();
-                    Logger.d("RecordingDevice", "encoder output format changed: %s", mediaFormat);
+                    Logger.d(this, "encoder output format changed: %s", mediaFormat);
                     trackIndex = mediaMuxer.addTrack(mediaFormat);
 
                     formatStatus = 1;
@@ -291,12 +293,12 @@ public class RecordingDevice extends EncoderDevice {
                         mediaMuxer.start();
                     }
 
-                    Logger.i("RecordingDevice", "Muxing");
+                    Logger.i(this, "Muxing");
                 }
             }
 
             doneCoding = true;
-            Logger.i("RecordingDevice", "Done recording");
+            Logger.i(this, "Done recording");
 
             if (audioMuxerThread != null) {
                 audioMuxerThread.join();
@@ -307,7 +309,7 @@ public class RecordingDevice extends EncoderDevice {
             MediaScannerConnection.scanFile(mContext, scanPaths, null,
                     new MediaScannerConnection.OnScanCompletedListener() {
                         public void onScanCompleted(final String path, final Uri uri) {
-                            Logger.i("RecordingDevice", "MediaScanner scanned recording %s", path);
+                            Logger.i(RecordingDevice.this, "MediaScanner scanned recording %s", path);
                         }
                     });
         }

@@ -32,6 +32,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.os.IBinder;
 import android.os.StatFs;
+import android.os.SystemProperties;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.text.TextUtils;
@@ -53,20 +54,17 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class ScreencastService extends Service {
-
-    private static final String TAG = ScreencastService.class.getSimpleName();
-
     public static final String ACTION_START_SCREENCAST = "org.namelessrom.ACTION_START_SCREENCAST";
-    public static final String ACTION_STOP_SCREENCAST  = "org.namelessrom.ACTION_STOP_SCREENCAST";
-    public static final String ACTION_SHOW_TOUCHES     = "org.namelessrom.SHOW_TOUCHES";
+    public static final String ACTION_STOP_SCREENCAST = "org.namelessrom.ACTION_STOP_SCREENCAST";
+    public static final String ACTION_SHOW_TOUCHES = "org.namelessrom.SHOW_TOUCHES";
 
     public static final String ACTION_DELETE_SCREENCAST =
             "org.namelessrom.ACTION_DELETE_SCREENCAST";
 
     private Notification.Builder mBuilder;
-    private RecordingDevice      mRecorder;
+    private RecordingDevice mRecorder;
 
-    private long  mStartTime;
+    private long mStartTime;
     private Timer mTimer;
 
     @Override public IBinder onBind(final Intent intent) { return null; }
@@ -82,6 +80,7 @@ public class ScreencastService extends Service {
             stopSelf();
             return START_STICKY;
         }
+        Logger.setEnabled(SystemProperties.getBoolean("ro.nameless.debug", Logger.getEnabled()));
 
         final String action = intent.getAction();
 
@@ -103,7 +102,7 @@ public class ScreencastService extends Service {
             try {
                 registerScreencaster();
             } catch (Exception e) {
-                Logger.e(TAG, "Failed to register screen caster", e);
+                Logger.e(this, "Failed to register screen caster", e);
             }
 
             mBuilder = createNotificationBuilder();
@@ -191,7 +190,7 @@ public class ScreencastService extends Service {
     private Notification.Builder createShareNotificationBuilder(final String filePath) {
         // parse the Uri
         final Uri localUri = Uri.parse("file://" + filePath);
-        Logger.i("ScreencastService", "Video complete: " + localUri);
+        Logger.i(this, "Video complete: %s", localUri);
 
         // create an temporary intent, which will be used to create the chooser
         final Intent tmpIntent = new Intent("android.intent.action.SEND");
@@ -276,10 +275,10 @@ public class ScreencastService extends Service {
             localDisplay.getRealSize(point);
             return point;
         } catch (Exception exception) {
-            Logger.e(TAG, "Failed getting real size", exception);
+            Logger.e(this, "Failed getting real size", exception);
             // fall back to reflection
             try {
-                Logger.e(TAG, "Failed getting real size again", exception);
+                Logger.e(this, "Failed getting real size again", exception);
                 // get the raw width
                 final Method getRawWidth = Display.class.getMethod("getRawWidth", new Class[0]);
                 point.x = ((Integer) getRawWidth.invoke(localDisplay, (Object[]) null));
@@ -290,7 +289,7 @@ public class ScreencastService extends Service {
 
                 return point;
             } catch (Exception notAnotherException) {
-                Logger.e(TAG, "Failed getting real size again again!", exception);
+                Logger.e(this, "Failed getting real size again again!", exception);
                 // our last resort...
                 localDisplay.getSize(point);
             }

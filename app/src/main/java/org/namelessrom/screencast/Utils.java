@@ -49,13 +49,13 @@ public class Utils {
     }
 
     public static ArrayList<VideoEncoderCap> getVideoEncoderCaps() {
-        final ArrayList<VideoEncoderCap> videoEncoderCaps = new ArrayList<VideoEncoderCap>();
+        final ArrayList<VideoEncoderCap> videoEncoderCaps = new ArrayList<>();
 
         try {
             final File mediaProfiles = new File("/system/etc/media_profiles.xml");
             final FileInputStream fis = new FileInputStream(mediaProfiles);
             byte[] byteArray = new byte[(int) mediaProfiles.length()];
-            Logger.v("getVideoEncoderCaps()", "fis.read(): %s",
+            Logger.v("getVideoEncoderCaps", "fis.read(): %s",
                     fis.read(byteArray, 0, byteArray.length));
             final String str = new String(byteArray);
             final RootElement rootElement = new RootElement("MediaSettings");
