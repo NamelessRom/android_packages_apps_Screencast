@@ -83,14 +83,13 @@ public class RecordingDevice extends EncoderDevice {
         }
 
         void encode() {
-            ByteBuffer[] outputBuffers = recorder.codec.getOutputBuffers();
             final long l = System.nanoTime();
 
             while (true) {
                 final MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
                 final int status = recorder.codec.dequeueOutputBuffer(bufferInfo, -1L);
                 if (status >= 0) {
-                    final ByteBuffer byteBuffer = outputBuffers[status];
+                    final ByteBuffer byteBuffer = recorder.codec.getOutputBuffer(status);
                     bufferInfo.presentationTimeUs = ((System.nanoTime() - l) / 1000L);
                     muxer.writeSampleData(track, byteBuffer, bufferInfo);
                     recorder.codec.releaseOutputBuffer(status, false);
@@ -98,8 +97,6 @@ public class RecordingDevice extends EncoderDevice {
                         Logger.d(this, "end of stream reached");
                         break;
                     }
-                } else if (status == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED) {
-                    outputBuffers = recorder.codec.getOutputBuffers();
                 } else if (status == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
                     final MediaFormat mediaFormat = recorder.codec.getOutputFormat();
                     track = muxer.addTrack(mediaFormat);
@@ -153,7 +150,7 @@ public class RecordingDevice extends EncoderDevice {
 
             // TODO: remote submix?
             final int minBuffer = AudioRecord.getMinBufferSize(44100, AudioFormat.CHANNEL_IN_MONO,
-                    AudioFormat.ENCODING_PCM_16BIT);
+                    AudioFormat.ENCODING_PCM_16BIT) * 10;
             Logger.i(this, "AudioRecorder init: %s", String.valueOf(minBuffer));
             record = new AudioRecord(MediaRecorder.AudioSource.MIC, 44100,
                     AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, minBuffer);
@@ -173,13 +170,11 @@ public class RecordingDevice extends EncoderDevice {
         }
 
         void encode() {
-            final ByteBuffer[] inputBuffers = codec.getInputBuffers();
             ByteBuffer byteBuffer;
             while (!recorder.doneCoding) {
                 final int status = codec.dequeueInputBuffer(1024L);
                 if (status >= 0) {
-                    byteBuffer = inputBuffers[status];
-                    byteBuffer.clear();
+                    byteBuffer = codec.getInputBuffer(status);
                     int number = record.read(byteBuffer, byteBuffer.capacity());
                     if (number < 0) {
                         number = 0;
@@ -197,12 +192,13 @@ public class RecordingDevice extends EncoderDevice {
                 record.startRecording();
                 encode();
                 record.stop();
-                record.release();
-                record = null;
                 if (noiseSuppressor != null) {
+                    noiseSuppressor.setEnabled(false);
                     noiseSuppressor.release();
                     noiseSuppressor = null;
                 }
+                record.release();
+                record = null;
                 Logger.i(this, "=======RECORDING COMPLETE=======");
             } catch (Exception e) {
                 Logger.e(this, "Recorder error", e);
@@ -232,7 +228,6 @@ public class RecordingDevice extends EncoderDevice {
             int formatStatus = 0;
             int trackIndex = -1;
             Thread audioMuxerThread = null;
-            ByteBuffer[] outputBuffers = mediaCodec.getOutputBuffers();
 
             final boolean withAudio = PreferenceHelper.get(mContext)
                     .getBoolean(PreferenceHelper.PREF_ENABLE_AUDIO, true);
@@ -251,7 +246,7 @@ public class RecordingDevice extends EncoderDevice {
 
                     if (formatStatus == 0) { throw new RuntimeException("muxer hasn't started"); }
 
-                    final ByteBuffer byteBuffer = outputBuffers[status];
+                    final ByteBuffer byteBuffer = mediaCodec.getOutputBuffer(status);
                     bufferInfo.presentationTimeUs = ((System.nanoTime() - start) / 1000L);
                     mediaMuxer.writeSampleData(trackIndex, byteBuffer, bufferInfo);
                     byteBuffer.clear();
@@ -260,8 +255,6 @@ public class RecordingDevice extends EncoderDevice {
                         Logger.d(this, "end of stream reached");
                         break;
                     }
-                } else if (status == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED) {
-                    outputBuffers = mediaCodec.getOutputBuffers();
                 } else if (status == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
                     if (formatStatus != 0) { throw new RuntimeException("format changed twice"); }
 
@@ -309,7 +302,8 @@ public class RecordingDevice extends EncoderDevice {
             MediaScannerConnection.scanFile(mContext, scanPaths, null,
                     new MediaScannerConnection.OnScanCompletedListener() {
                         public void onScanCompleted(final String path, final Uri uri) {
-                            Logger.i(RecordingDevice.this, "MediaScanner scanned recording %s", path);
+                            Logger.i(RecordingDevice.this, "MediaScanner scanned recording %s",
+                                    path);
                         }
                     });
         }
