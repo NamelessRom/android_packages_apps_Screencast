@@ -28,6 +28,7 @@ import android.media.MediaFormat;
 import android.media.MediaMuxer;
 import android.media.MediaRecorder;
 import android.media.MediaScannerConnection;
+import android.media.audiofx.NoiseSuppressor;
 import android.net.Uri;
 import android.os.Environment;
 
@@ -133,6 +134,8 @@ public class RecordingDevice extends EncoderDevice {
         private final MediaCodec codec;
         private AudioRecord record;
 
+        private NoiseSuppressor noiseSuppressor;
+
         public AudioRecorder(final RecordingDevice.Recorder recorder) throws IOException {
             this.recorder = recorder;
 
@@ -154,6 +157,17 @@ public class RecordingDevice extends EncoderDevice {
             Logger.i("RecordingDevice", "AudioRecorder init: " + String.valueOf(minBuffer));
             record = new AudioRecord(MediaRecorder.AudioSource.MIC, 44100,
                     AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, minBuffer);
+
+            // check if noise suppression is available
+            if (NoiseSuppressor.isAvailable()) {
+                // if it is available, check if the user turned it on
+                final boolean useNoiseSuppression = PreferenceHelper.get(mContext)
+                        .getBoolean(PreferenceHelper.PREF_ENABLE_NOISE_SUPPRESSION, false);
+                if (useNoiseSuppression) {
+                    noiseSuppressor = NoiseSuppressor.create(record.getAudioSessionId());
+                    noiseSuppressor.setEnabled(true);
+                }
+            }
         }
 
         void encode() {
@@ -183,6 +197,10 @@ public class RecordingDevice extends EncoderDevice {
                 record.stop();
                 record.release();
                 record = null;
+                if (noiseSuppressor != null) {
+                    noiseSuppressor.release();
+                    noiseSuppressor = null;
+                }
                 Logger.i("RecordingDevice", "=======RECORDING COMPLETE=======");
             } catch (Exception e) {
                 Logger.e("RecordingDevice", "Recorder error", e);

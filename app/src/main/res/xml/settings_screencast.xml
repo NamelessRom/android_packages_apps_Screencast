@@ -58,6 +58,12 @@
             android:title="@string/enable_audio"
             android:defaultValue="true" />
 
+        <CheckBoxPreference
+            android:key="enable_noise_suppression"
+            android:title="@string/noise_suppression"
+            android:dependency="enable_audio"
+            android:defaultValue="false" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>

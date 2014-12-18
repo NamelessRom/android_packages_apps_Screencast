@@ -40,4 +40,5 @@
 
     <string name="audio">Audio</string>
     <string name="enable_audio">Enable audio</string>
+    <string name="noise_suppression">Noise suppression</string>
 </resources>

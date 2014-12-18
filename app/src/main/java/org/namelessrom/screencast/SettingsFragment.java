@@ -19,6 +19,7 @@
 
 package org.namelessrom.screencast;
 
+import android.media.audiofx.NoiseSuppressor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.ListPreference;
@@ -38,7 +39,8 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
     private ListPreference mFramerate;
 
     // handled via xml
-    //private CheckBoxPReference mEnableAudio;
+    //private CheckBoxPreference mEnableAudio;
+    //private CheckBoxPreference mEnableNoiseSuppression;
 
     @Override public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +51,12 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
 
         mFramerate = (ListPreference) findPreference(PreferenceHelper.PREF_FRAMERATE);
         mFramerate.setEnabled(false);
+
+        // Remove noise suppression option if not supported
+        if (!NoiseSuppressor.isAvailable()) {
+            final Preference pref = findPreference(PreferenceHelper.PREF_ENABLE_NOISE_SUPPRESSION);
+            getPreferenceScreen().removePreference(pref);
+        }
 
         // fill our preferences with values
         new ReadValuesTask().execute();
@@ -94,8 +102,8 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
                 return;
             }
 
-            final ArrayList<String> entries = new ArrayList<String>();
-            final ArrayList<String> values = new ArrayList<String>();
+            final ArrayList<String> entries = new ArrayList<>();
+            final ArrayList<String> values = new ArrayList<>();
             int tmp;
 
             if (mBitrate != null) {
