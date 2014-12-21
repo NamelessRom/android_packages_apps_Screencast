@@ -26,7 +26,7 @@ import android.util.Log;
  */
 public class Logger {
 
-    private static boolean DEBUG = false;
+    private static boolean DEBUG = true;
 
     public static synchronized void setEnabled(final boolean enable) { DEBUG = enable; }
 
