@@ -42,6 +42,8 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
     //private CheckBoxPreference mEnableAudio;
     //private CheckBoxPreference mEnableNoiseSuppression;
 
+    private ListPreference mAudioInput;
+
     @Override public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.settings_screencast);
@@ -58,6 +60,12 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
             getPreferenceScreen().removePreference(pref);
         }
 
+        int value = PreferenceHelper.get(getActivity())
+                .getInt(PreferenceHelper.PREF_AUDIO_INPUT_DEVICE, 0);
+        mAudioInput = (ListPreference) findPreference(PreferenceHelper.PREF_AUDIO_INPUT_DEVICE);
+        mAudioInput.setSummary(mapAudioInput(value));
+        mAudioInput.setOnPreferenceChangeListener(this);
+
         // fill our preferences with values
         new ReadValuesTask().execute();
     }
@@ -65,29 +73,39 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
     @Override public boolean onPreferenceChange(Preference preference, Object o) {
         if (mBitrate == preference) {
             final String tmp = String.valueOf(o);
-            final int value;
-            try {
-                value = Integer.parseInt(tmp);
-                PreferenceHelper.get(getActivity()).setInt(PreferenceHelper.PREF_BITRATE, value);
-                mBitrate.setSummary(Utils.toBitrate(value));
-            } catch (NumberFormatException exception) {
-                return false;
-            }
+            final int value = Utils.parseInt(tmp);
+            if (value == -1) return false;
+            PreferenceHelper.get(getActivity()).setInt(PreferenceHelper.PREF_BITRATE, value);
+            mBitrate.setSummary(Utils.toBitrate(value));
             return true;
         } else if (mFramerate == preference) {
             final String tmp = String.valueOf(o);
-            final int value;
-            try {
-                value = Integer.parseInt(tmp);
-                PreferenceHelper.get(getActivity()).setInt(PreferenceHelper.PREF_FRAMERATE, value);
-                mFramerate.setSummary(String.format("%s fps", value));
-            } catch (NumberFormatException exception) {
-                return false;
-            }
+            final int value = Utils.parseInt(tmp);
+            if (value == -1) return false;
+            PreferenceHelper.get(getActivity()).setInt(PreferenceHelper.PREF_FRAMERATE, value);
+            mFramerate.setSummary(String.format("%s fps", value));
+            return true;
+        } else if (mAudioInput == preference) {
+            final String tmp = String.valueOf(o);
+            final int value = Utils.parseInt(tmp);
+            if (value == -1) return false;
+            PreferenceHelper.get(getActivity())
+                    .setInt(PreferenceHelper.PREF_AUDIO_INPUT_DEVICE, value);
+            mAudioInput.setSummary(mapAudioInput(value));
             return true;
         }
 
         return false;
+    }
+
+    private int mapAudioInput(final int value) {
+        switch (value) {
+            default:
+            case 0: // microphone
+                return R.string.microphone;
+            case 1: // device
+                return R.string.device;
+        }
     }
 
     private class ReadValuesTask extends AsyncTask<Void, Void, VideoEncoderCap> {

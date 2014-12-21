@@ -104,4 +104,12 @@ public class Utils {
 
         return value;
     }
+
+    public static int parseInt(final String value) {
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException exc) {
+            return -1;
+        }
+    }
 }

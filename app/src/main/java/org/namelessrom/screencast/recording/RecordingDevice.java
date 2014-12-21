@@ -20,13 +20,11 @@
 package org.namelessrom.screencast.recording;
 
 import android.content.Context;
-import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
 import android.media.MediaFormat;
 import android.media.MediaMuxer;
-import android.media.MediaRecorder;
 import android.media.MediaScannerConnection;
 import android.media.audiofx.NoiseSuppressor;
 import android.net.Uri;
@@ -34,6 +32,7 @@ import android.os.Environment;
 
 import org.namelessrom.screencast.Logger;
 import org.namelessrom.screencast.PreferenceHelper;
+import org.namelessrom.screencast.recording.audio.BaseInputSource;
 
 import java.io.File;
 import java.io.IOException;
@@ -136,11 +135,13 @@ public class RecordingDevice extends EncoderDevice {
         public AudioRecorder(final RecordingDevice.Recorder recorder) throws IOException {
             this.recorder = recorder;
 
+            final BaseInputSource inputSource = BaseInputSource.getInputSource(mContext);
+
             final MediaFormat format = new MediaFormat();
             format.setString(MediaFormat.KEY_MIME, MIME);
-            format.setInteger(MediaFormat.KEY_BIT_RATE, 64 * 1024);
-            format.setInteger(MediaFormat.KEY_CHANNEL_COUNT, 1);
-            format.setInteger(MediaFormat.KEY_SAMPLE_RATE, 44100);
+            format.setInteger(MediaFormat.KEY_BIT_RATE, inputSource.getBitrate());
+            format.setInteger(MediaFormat.KEY_CHANNEL_COUNT, inputSource.getChannelCount());
+            format.setInteger(MediaFormat.KEY_SAMPLE_RATE, inputSource.getSampleRate());
             format.setInteger(MediaFormat.KEY_AAC_PROFILE,
                     MediaCodecInfo.CodecProfileLevel.AACObjectHE);
 
@@ -148,12 +149,7 @@ public class RecordingDevice extends EncoderDevice {
             codec.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
             codec.start();
 
-            // TODO: remote submix?
-            final int minBuffer = AudioRecord.getMinBufferSize(44100, AudioFormat.CHANNEL_IN_MONO,
-                    AudioFormat.ENCODING_PCM_16BIT) * 10;
-            Logger.i(this, "AudioRecorder init: %s", String.valueOf(minBuffer));
-            record = new AudioRecord(MediaRecorder.AudioSource.MIC, 44100,
-                    AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, minBuffer);
+            record = inputSource.createAudioRecord();
 
             // check if noise suppression is available
             if (NoiseSuppressor.isAvailable()) {

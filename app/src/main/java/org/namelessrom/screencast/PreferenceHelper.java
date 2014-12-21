@@ -30,6 +30,8 @@ public class PreferenceHelper {
     public static final String PREF_ENABLE_AUDIO = "enable_audio";
     public static final String PREF_ENABLE_NOISE_SUPPRESSION = "enable_noise_suppression";
 
+    public static final String PREF_AUDIO_INPUT_DEVICE = "audio_input_device";
+
     private static PreferenceHelper sInstance;
     private static SharedPreferences sPrefs;
 
@@ -45,16 +47,19 @@ public class PreferenceHelper {
     }
 
     public int getInt(final String name, final int def) {
-        try {
-            return Integer.parseInt(sPrefs.getString(name, String.valueOf(def)));
-        } catch (NumberFormatException exc) {
-            Logger.e(this, "getInt", exc);
-            return def;
-        }
+        return Utils.parseInt(getString(name, String.valueOf(def)));
+    }
+
+    public String getString(final String name, final String value) {
+        return sPrefs.getString(name, value);
+    }
+
+    public void setString(final String name, final String value) {
+        sPrefs.edit().putString(name, value).apply();
     }
 
     public void setInt(final String name, final int value) {
-        sPrefs.edit().putString(name, String.valueOf(value)).apply();
+        setString(name, String.valueOf(value));
     }
 
     public boolean getBoolean(final String name, final boolean def) {
