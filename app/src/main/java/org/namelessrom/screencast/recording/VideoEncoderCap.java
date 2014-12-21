@@ -48,6 +48,14 @@ public class VideoEncoderCap {
         minFrameRate = parseInt(attributes.getValue("minFrameRate"));
     }
 
+    @Override public String toString() {
+        return String.format("VideoEncoderCap\n"
+                        + "maxFrameWidth -> %s\nmaxFrameHeight -> %s\n"
+                        + "maxBitRate -> %s\nminBitRate -> %s\n"
+                        + "maxFrameRate -> %s\nminFrameRate -> %s",
+                maxFrameWidth, maxFrameHeight, maxBitRate, minBitRate, maxFrameRate, minFrameRate);
+    }
+
     private int parseInt(final String value) {
         try {
             return Integer.valueOf(value);

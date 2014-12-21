@@ -65,7 +65,9 @@ public class Utils {
 
                 public void start(Attributes attributes) {
                     if (TextUtils.equals(attributes.getValue("name"), "h264")) {
-                        videoEncoderCaps.add(new VideoEncoderCap(attributes));
+                        final VideoEncoderCap videoEncoderCap = new VideoEncoderCap(attributes);
+                        Logger.v("getVideoEncoderCaps()", videoEncoderCap.toString());
+                        videoEncoderCaps.add(videoEncoderCap);
                     }
                 }
             };
