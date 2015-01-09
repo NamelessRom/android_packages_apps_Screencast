@@ -257,7 +257,11 @@ public class ScreencastService extends Service {
 
     private void cleanup() {
         if (mRecorder != null) {
-            mRecorder.stop();
+            try {
+                mRecorder.stop();
+            } catch (IllegalStateException ise) {
+                Logger.e(this, "Failed to stop recorder", ise);
+            }
             mRecorder = null;
         }
         if (mTimer != null) {

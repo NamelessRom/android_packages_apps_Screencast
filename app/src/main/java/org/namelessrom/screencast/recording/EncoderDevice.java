@@ -154,7 +154,7 @@ public abstract class EncoderDevice {
         return virtualDisplay;
     }
 
-    public void stop() {
+    public void stop() throws IllegalStateException {
         if (mMediaCodec != null) {
             mMediaCodec.signalEndOfInputStream();
             mMediaCodec = null;
