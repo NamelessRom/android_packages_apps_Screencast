@@ -150,7 +150,7 @@ public class ScreencastService extends Service {
         final Intent intent = new Intent(ACTION_STOP_SCREENCAST);
         final Notification.Builder builder = new Notification.Builder(this);
         builder.setOngoing(true)
-                .setSmallIcon(R.drawable.ic_launcher)
+                .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(getString(R.string.recording))
                 .addAction(R.drawable.ic_stop, getString(R.string.stop),
                         PendingIntent.getBroadcast(this, 0, intent, 0));
@@ -227,7 +227,7 @@ public class ScreencastService extends Service {
         // build the notification
         return new Notification.Builder(this)
                 .setWhen(System.currentTimeMillis())
-                .setSmallIcon(R.drawable.ic_launcher)
+                .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(getString(R.string.recording_ready_to_share))
                 .setContentText(getString(R.string.video_length, duration))
                 .setContentIntent(pendingViewIntent)
