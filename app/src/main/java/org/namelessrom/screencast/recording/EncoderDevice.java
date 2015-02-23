@@ -109,7 +109,7 @@ public abstract class EncoderDevice {
             Logger.i(this, "frameRate -> %s", frameRate);
         }
 
-        final String mime = "video/avc";
+        final String mime = MediaFormat.MIMETYPE_VIDEO_AVC;
         final MediaFormat mediaFormat = MediaFormat.createVideoFormat(mime, mWidth, mHeight);
         mediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, bitRate);
         mediaFormat.setInteger(MediaFormat.KEY_FRAME_RATE, frameRate);

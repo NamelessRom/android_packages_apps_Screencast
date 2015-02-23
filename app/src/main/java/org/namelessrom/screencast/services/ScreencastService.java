@@ -25,6 +25,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.hardware.display.DisplayManager;
 import android.hardware.display.VirtualDisplay;
@@ -57,9 +58,10 @@ public class ScreencastService extends Service {
     public static final String ACTION_START_SCREENCAST = "org.namelessrom.ACTION_START_SCREENCAST";
     public static final String ACTION_STOP_SCREENCAST = "org.namelessrom.ACTION_STOP_SCREENCAST";
     public static final String ACTION_SHOW_TOUCHES = "org.namelessrom.SHOW_TOUCHES";
-
     public static final String ACTION_DELETE_SCREENCAST =
             "org.namelessrom.ACTION_DELETE_SCREENCAST";
+
+    private static final int COLOR_NOTIFICATION = Color.argb(255, 75, 172, 79);
 
     private Notification.Builder mBuilder;
     private RecordingDevice mRecorder;
@@ -150,8 +152,9 @@ public class ScreencastService extends Service {
         final Intent intent = new Intent(ACTION_STOP_SCREENCAST);
         final Notification.Builder builder = new Notification.Builder(this);
         builder.setOngoing(true)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.drawable.ic_stat_videocam)
                 .setContentTitle(getString(R.string.recording))
+                .setColor(COLOR_NOTIFICATION)
                 .addAction(R.drawable.ic_stop, getString(R.string.stop),
                         PendingIntent.getBroadcast(this, 0, intent, 0));
         return builder;
@@ -159,9 +162,8 @@ public class ScreencastService extends Service {
 
     private void updateNotification() {
         final long delta = System.currentTimeMillis() - mStartTime;
-        final SimpleDateFormat localSimpleDateFormat = new SimpleDateFormat("mm:ss");
-
-        mBuilder.setContentText("Video Length : " + localSimpleDateFormat.format(new Date(delta)));
+        final String deltaString = new SimpleDateFormat("mm:ss").format(new Date(delta));
+        mBuilder.setContentText(getString(R.string.video_length, deltaString));
 
         ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE))
                 .notify(0, mBuilder.build());
@@ -188,23 +190,24 @@ public class ScreencastService extends Service {
 
 
     private Notification.Builder createShareNotificationBuilder(final String filePath) {
+        final String mime = "video/mp4";
         // parse the Uri
-        final Uri localUri = Uri.parse("file://" + filePath);
+        final Uri localUri = Uri.parse(String.format("file://%s", filePath));
         Logger.i(this, "Video complete: %s", localUri);
 
         // create an temporary intent, which will be used to create the chooser
-        final Intent tmpIntent = new Intent("android.intent.action.SEND");
-        tmpIntent.setType("video/mp4");
-        tmpIntent.putExtra("android.intent.extra.STREAM", localUri);
-        tmpIntent.putExtra("android.intent.extra.SUBJECT", filePath);
+        final Intent tmpIntent = new Intent(Intent.ACTION_SEND);
+        tmpIntent.setType(mime);
+        tmpIntent.putExtra(Intent.EXTRA_STREAM, localUri);
+        tmpIntent.putExtra(Intent.EXTRA_SUBJECT, filePath);
 
         // create the intent, which lets us choose how we want to share the screencast
         final Intent shareIntent = Intent.createChooser(tmpIntent, null);
         shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
         // create an intent, which opens the screencast
-        final Intent viewIntent = new Intent("android.intent.action.VIEW");
-        viewIntent.setDataAndType(localUri, "video/mp4");
+        final Intent viewIntent = new Intent(Intent.ACTION_VIEW);
+        viewIntent.setDataAndType(localUri, mime);
         viewIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         // create an intent, which deletes the record
@@ -227,7 +230,8 @@ public class ScreencastService extends Service {
         // build the notification
         return new Notification.Builder(this)
                 .setWhen(System.currentTimeMillis())
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.drawable.ic_stat_videocam)
+                .setColor(COLOR_NOTIFICATION)
                 .setContentTitle(getString(R.string.recording_ready_to_share))
                 .setContentText(getString(R.string.video_length, duration))
                 .setContentIntent(pendingViewIntent)
