@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.namelessrom.screencast"
-    android:versionCode="3"
+    android:versionCode="4"
     android:versionName="1.0.2">
 
     <uses-sdk
@@ -30,6 +30,9 @@
             android:theme="@android:style/Theme.Material.Dialog.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+                <action android:name="org.namelessrom.screencast.ACTION_SCREEN_RECORD" />
+
+                <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
