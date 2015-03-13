@@ -53,6 +53,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.TimeZone;
 
 public class ScreencastService extends Service {
     public static final String ACTION_START_SCREENCAST = "org.namelessrom.ACTION_START_SCREENCAST";
@@ -68,6 +69,8 @@ public class ScreencastService extends Service {
 
     private long mStartTime;
     private Timer mTimer;
+
+    private SimpleDateFormat mSimpleDateFormat;
 
     @Override public IBinder onBind(final Intent intent) { return null; }
 
@@ -101,6 +104,9 @@ public class ScreencastService extends Service {
             }
 
             mStartTime = System.currentTimeMillis();
+            mSimpleDateFormat = new SimpleDateFormat("mm:ss");
+            mSimpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
             try {
                 registerScreencaster();
             } catch (Exception e) {
@@ -162,7 +168,7 @@ public class ScreencastService extends Service {
 
     private void updateNotification() {
         final long delta = System.currentTimeMillis() - mStartTime;
-        final String deltaString = new SimpleDateFormat("mm:ss").format(new Date(delta));
+        final String deltaString = mSimpleDateFormat.format(new Date(delta));
         mBuilder.setContentText(getString(R.string.video_length, deltaString));
 
         ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE))
@@ -216,7 +222,7 @@ public class ScreencastService extends Service {
         delIntent.setData(localUri);
 
         // get the duration of the screencast in minute:seconds format
-        final String duration = new SimpleDateFormat("mm:ss")
+        final String duration = mSimpleDateFormat
                 .format(new Date(System.currentTimeMillis() - mStartTime));
 
         // create our pending intents
