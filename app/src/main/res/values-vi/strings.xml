@@ -38,4 +38,6 @@
   <string name="framerate">Tốc độ khung hình</string>
   <string name="audio">Âm Thanh</string>
   <string name="enable_audio">Kích hoạt âm thanh</string>
+  <string name="microphone">Micro</string>
+  <string name="device">Thiết bị</string>
 </resources>

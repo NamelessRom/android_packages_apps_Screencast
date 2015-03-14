@@ -17,5 +17,29 @@
    *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <resources>
+  <string name="app_name">Запись экрана</string>
+  <string name="start_description">Нажмите \"%s\", чтобы начать запись видео и звука с экрана устройства.</string>
+  <string name="start_screencast">Начать запись</string>
+  <string name="stop_description">Нажмите \"%s\", чтобы остановить запись звука и видео с экрана устройства.</string>
+  <string name="stop">Остановить</string>
+  <string name="share">Поделиться</string>
+  <string name="delete">Удалить</string>
+  <string name="insufficient_storage">Недостаточно памяти</string>
+  <string name="not_enough_storage">Не хватает свободной памяти</string>
+  <string name="show_touches">Показывать касания</string>
+  <string name="recording">Запись&#8230;</string>
+  <string name="recording_ready_to_share">Запись готова к отправке</string>
+  <string name="video_length">Длительность видео: %s</string>
+  <string name="configure">Настройка</string>
+  <string name="settings_information">Изменения вступят в силу при следующем запуске!</string>
   <string name="general">Общее</string>
+  <string name="video">Видео</string>
+  <string name="bitrate">Битрейт</string>
+  <string name="framerate">Частота кадров</string>
+  <string name="audio">Аудио</string>
+  <string name="enable_audio">Включить звук</string>
+  <string name="input_device">Устройства ввода</string>
+  <string name="noise_suppression">Шумоподавление</string>
+  <string name="microphone">Микрофон</string>
+  <string name="device">Устройство</string>
 </resources>

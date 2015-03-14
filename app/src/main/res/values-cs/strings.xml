@@ -18,4 +18,5 @@
   -->
 <resources>
   <string name="general">Obecné</string>
+  <string name="device">Zařízení</string>
 </resources>

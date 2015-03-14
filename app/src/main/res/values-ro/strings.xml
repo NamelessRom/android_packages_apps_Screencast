@@ -17,5 +17,27 @@
    *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <resources>
+  <string name="app_name">Înregistrare ecran</string>
+  <string name="start_description">Apăsaţi pe \"%s\" pentru a începe înregistrarea ecranului  Android şi a microfonului.</string>
+  <string name="start_screencast">Pornește înregistrare ecran</string>
+  <string name="stop_description">Apăsaţi pe \"%s\" pentru a opri înregistrarea ecranului Android și a microfonului.</string>
+  <string name="stop">Oprire</string>
+  <string name="share">Partajare</string>
+  <string name="delete">Ștergere</string>
+  <string name="insufficient_storage">Capacitate de stocare insuficientă</string>
+  <string name="not_enough_storage">Nu există spațiu suficient pentru stocare</string>
+  <string name="show_touches">Arată apăsările</string>
+  <string name="recording">Înregistrare...</string>
+  <string name="recording_ready_to_share">Înregistrarea este gata de partajare</string>
+  <string name="video_length">Lungime video: %s</string>
+  <string name="configure">Configurare</string>
+  <string name="settings_information">Schimbările vor avea efect când veţi porni o nouă înregistrare!</string>
   <string name="general">General</string>
+  <string name="video">Video</string>
+  <string name="bitrate">Rată biţi</string>
+  <string name="framerate">Număr de cadre</string>
+  <string name="audio">Audio</string>
+  <string name="enable_audio">Activează audio</string>
+  <string name="microphone">Microfon</string>
+  <string name="device">Dispozitiv</string>
 </resources>

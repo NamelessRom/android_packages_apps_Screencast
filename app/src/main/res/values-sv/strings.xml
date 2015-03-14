@@ -38,4 +38,7 @@
   <string name="framerate">Bilduppdatering</string>
   <string name="audio">Ljud</string>
   <string name="enable_audio">Aktivera ljud</string>
+  <string name="input_device">Inmatningsenhet</string>
+  <string name="noise_suppression">Brusreducering</string>
+  <string name="device">Enheten</string>
 </resources>

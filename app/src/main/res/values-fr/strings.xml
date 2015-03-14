@@ -24,6 +24,7 @@
   <string name="stop">Stop</string>
   <string name="share">Partager</string>
   <string name="delete">Effacer</string>
+  <string name="insufficient_storage">Stockage insuffisant</string>
   <string name="not_enough_storage">Espace de stockage insuffisant</string>
   <string name="show_touches">Montrer les gestes</string>
   <string name="recording">Enregistrement&#8230;</string>
@@ -37,4 +38,8 @@
   <string name="framerate">Framerate</string>
   <string name="audio">Audio</string>
   <string name="enable_audio">Permettre l\'audio</string>
+  <string name="input_device">Périphérique d\'entrée</string>
+  <string name="noise_suppression">Atténuation de bruit</string>
+  <string name="microphone">Microphone</string>
+  <string name="device">Appareil</string>
 </resources>

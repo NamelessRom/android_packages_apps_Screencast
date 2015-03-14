@@ -38,4 +38,8 @@
   <string name="framerate">Framerate</string>
   <string name="audio">Geluid</string>
   <string name="enable_audio">Geluid inschakelen</string>
+  <string name="input_device">Invoerapparaat</string>
+  <string name="noise_suppression">Ruisonderdrukking</string>
+  <string name="microphone">Microfoon</string>
+  <string name="device">Apparaat</string>
 </resources>

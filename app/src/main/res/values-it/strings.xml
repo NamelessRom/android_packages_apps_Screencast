@@ -38,4 +38,6 @@
   <string name="framerate">Frequenza dei fotogrammi</string>
   <string name="audio">Audio</string>
   <string name="enable_audio">Attiva l\'audio</string>
+  <string name="microphone">Microfono</string>
+  <string name="device">Dispositivo</string>
 </resources>

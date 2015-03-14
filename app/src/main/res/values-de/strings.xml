@@ -38,4 +38,8 @@
   <string name="framerate">Framerate</string>
   <string name="audio">Audio</string>
   <string name="enable_audio">Audio aktivieren</string>
+  <string name="input_device">Eingabegerät</string>
+  <string name="noise_suppression">Rauschunterdrückung</string>
+  <string name="microphone">Mikrofon</string>
+  <string name="device">Gerät</string>
 </resources>

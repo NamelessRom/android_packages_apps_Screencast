@@ -38,4 +38,8 @@
   <string name="framerate">帧率</string>
   <string name="audio">音效</string>
   <string name="enable_audio">启用音效</string>
+  <string name="input_device">输入设备</string>
+  <string name="noise_suppression">噪声抑制</string>
+  <string name="microphone">麦克风</string>
+  <string name="device">设备</string>
 </resources>
