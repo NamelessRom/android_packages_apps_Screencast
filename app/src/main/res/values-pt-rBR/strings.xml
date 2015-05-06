@@ -32,12 +32,13 @@
   <string name="video_length">Tamanho do vídeo: %s</string>
   <string name="configure">Configurar</string>
   <string name="settings_information">As alterações terão efeito quando se iniciar um novo screencast!</string>
-  <string name="general">Geral</string>
   <string name="video">Vídeo</string>
   <string name="bitrate">Taxa de Bits (Bitrate)</string>
   <string name="framerate">Framerate</string>
   <string name="audio">Áudio</string>
   <string name="enable_audio">Ativar o áudio</string>
+  <string name="input_device">Dispositivo de entrada</string>
+  <string name="noise_suppression">Supressão de ruído</string>
   <string name="microphone">Microfone</string>
   <string name="device">Dispositivo</string>
 </resources>
