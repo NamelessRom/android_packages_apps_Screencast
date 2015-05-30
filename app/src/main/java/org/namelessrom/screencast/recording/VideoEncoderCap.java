@@ -11,7 +11,7 @@ public class VideoEncoderCap {
     public final int maxFrameRate;
     public final int minFrameRate;
 
-    public static final int MAX_VIDEO_BITRATE = 2000000;
+    public static final int MAX_VIDEO_BITRATE = 5000000;
 
     public static final int[] VIDEO_BITRATES = new int[]{
             64000,
@@ -22,11 +22,14 @@ public class VideoEncoderCap {
             1280000,
             1512000,
             1796000,
+            2000000,
+            3000000,
+            4000000,
             MAX_VIDEO_BITRATE,
             //10000000,
     };
 
-    public static final int MAX_VIDEO_FRAMERATE = 30;
+    public static final int MAX_VIDEO_FRAMERATE = 60;
 
     public static final int[] VIDEO_FRAMERATES = new int[]{
             15,
@@ -36,6 +39,7 @@ public class VideoEncoderCap {
             25,
             26,
             29,
+            30,
             MAX_VIDEO_FRAMERATE,
     };
 
