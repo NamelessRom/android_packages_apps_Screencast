@@ -85,7 +85,9 @@ public class ScreencastService extends Service {
             stopSelf();
             return START_STICKY;
         }
-        Logger.setEnabled(SystemProperties.getBoolean("ro.nameless.debug", Logger.getEnabled()));
+
+        Logger.setEnabled(SystemProperties.getBoolean("persist.nameless.debug",
+                SystemProperties.getBoolean("ro.nameless.debug", Logger.getEnabled())));
 
         final String action = intent.getAction();
 
