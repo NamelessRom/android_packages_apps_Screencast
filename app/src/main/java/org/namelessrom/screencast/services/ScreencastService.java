@@ -51,9 +51,9 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.TimeZone;
 
 public class ScreencastService extends Service {
     public static final String ACTION_START_SCREENCAST = "org.namelessrom.ACTION_START_SCREENCAST";
@@ -282,13 +282,10 @@ public class ScreencastService extends Service {
         }
     }
 
-    private Point getNativeResolution() {
-        final Display localDisplay =
-                ((DisplayManager) getSystemService(Context.DISPLAY_SERVICE)).getDisplay(0);
-        final Point point = new Point();
+    private Point getNativeResolution(Display display, Point point) {
         try {
             // try to get the real size and return it
-            localDisplay.getRealSize(point);
+            display.getRealSize(point);
             return point;
         } catch (Exception exception) {
             Logger.e(this, "Failed getting real size", exception);
@@ -296,31 +293,32 @@ public class ScreencastService extends Service {
             try {
                 Logger.e(this, "Failed getting real size again", exception);
                 // get the raw width
-                final Method getRawWidth = Display.class.getMethod("getRawWidth", new Class[0]);
-                point.x = ((Integer) getRawWidth.invoke(localDisplay, (Object[]) null));
+                final Method getRawWidth = Display.class.getMethod("getRawWidth");
+                point.x = ((Integer) getRawWidth.invoke(display, (Object[]) null));
 
                 // get the raw height
-                final Method getRawHeight = Display.class.getMethod("getRawHeight", new Class[0]);
-                point.y = ((Integer) getRawHeight.invoke(localDisplay, (Object[]) null));
+                final Method getRawHeight = Display.class.getMethod("getRawHeight");
+                point.y = ((Integer) getRawHeight.invoke(display, (Object[]) null));
 
                 return point;
             } catch (Exception notAnotherException) {
                 Logger.e(this, "Failed getting real size again again!", exception);
                 // our last resort...
-                localDisplay.getSize(point);
+                display.getSize(point);
             }
         }
         return point;
     }
 
     private void registerScreencaster() {
-        final Display display =
-                ((DisplayManager) getSystemService(Context.DISPLAY_SERVICE)).getDisplay(0);
+        final DisplayManager dm = ((DisplayManager) getSystemService(Context.DISPLAY_SERVICE));
+        final Display display = dm.getDisplay(0);
 
         final DisplayMetrics metrics = new DisplayMetrics();
         display.getMetrics(metrics);
 
-        final Point point = getNativeResolution();
+        final Point point = new Point();
+        getNativeResolution(display, point);
         mRecorder = new RecordingDevice(this, point.x, point.y);
 
         final VirtualDisplay virtualDisplay = mRecorder.registerVirtualDisplay(this, metrics);

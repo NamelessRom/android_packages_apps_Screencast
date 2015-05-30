@@ -125,7 +125,7 @@ public class RecordingDevice extends EncoderDevice {
     }
 
     private class AudioRecorder implements Runnable {
-        private static final String MIME = "audio/mp4a-latm";
+        private static final String MIME = MediaFormat.MIMETYPE_AUDIO_AAC;
 
         private final RecordingDevice.Recorder recorder;
 
