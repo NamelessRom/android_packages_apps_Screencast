@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.Semaphore;
 
 public class RecordingDevice extends EncoderDevice {
@@ -53,7 +54,7 @@ public class RecordingDevice extends EncoderDevice {
         super(context, width, height);
         mContext = context;
 
-        final String date = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss")
+        final String date = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss", Locale.getDefault())
                 .format(new Date(System.currentTimeMillis()));
         mFile = new File(RECORDINGS_DIR, "Screencast_" + date + ".mp4");
     }
@@ -86,19 +87,23 @@ public class RecordingDevice extends EncoderDevice {
 
             while (true) {
                 final MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
-                final int status = recorder.codec.dequeueOutputBuffer(bufferInfo, -1L);
-                if (status >= 0) {
-                    final ByteBuffer byteBuffer = recorder.codec.getOutputBuffer(status);
+                final int index = recorder.codec.dequeueOutputBuffer(bufferInfo, -1L);
+                if (index >= 0) {
+                    final ByteBuffer byteBuffer = recorder.codec.getOutputBuffer(index);
+                    if (byteBuffer == null) {
+                        Logger.w(this, "byteBuffer is null, skipping");
+                        continue;
+                    }
                     bufferInfo.presentationTimeUs = ((System.nanoTime() - l) / 1000L);
                     muxer.writeSampleData(track, byteBuffer, bufferInfo);
-                    recorder.codec.releaseOutputBuffer(status, false);
+                    recorder.codec.releaseOutputBuffer(index, false);
                     if ((bufferInfo.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0
                             || mShouldStopEncoding) {
                         Logger.d(this, "end of stream reached");
                         mShouldStopEncoding = true;
                         break;
                     }
-                } else if (status == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
+                } else if (index == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
                     final MediaFormat mediaFormat = recorder.codec.getOutputFormat();
                     track = muxer.addTrack(mediaFormat);
                     muxer.start();
@@ -170,9 +175,9 @@ public class RecordingDevice extends EncoderDevice {
         void encode() {
             ByteBuffer byteBuffer;
             while (!recorder.doneCoding) {
-                final int status = codec.dequeueInputBuffer(1024L);
-                if (status >= 0) {
-                    byteBuffer = codec.getInputBuffer(status);
+                final int index = codec.dequeueInputBuffer(1024L);
+                if (index >= 0) {
+                    byteBuffer = codec.getInputBuffer(index);
                     if (byteBuffer == null) {
                         Logger.w(this, "byteBuffer is null, skipping");
                         continue;
@@ -182,7 +187,7 @@ public class RecordingDevice extends EncoderDevice {
                         number = 0;
                     }
                     byteBuffer.clear();
-                    codec.queueInputBuffer(status, 0, number, System.nanoTime() / 1000L, 0);
+                    codec.queueInputBuffer(index, 0, number, System.nanoTime() / 1000L, 0);
                 }
             }
             final int index = codec.dequeueInputBuffer(-1L);
@@ -236,10 +241,9 @@ public class RecordingDevice extends EncoderDevice {
 
             final long start = System.nanoTime();
             final MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
-            int status;
             while (true) {
-                status = mediaCodec.dequeueOutputBuffer(bufferInfo, -1L);
-                if (status >= 0) {
+                final int index = mediaCodec.dequeueOutputBuffer(bufferInfo, -1L);
+                if (index >= 0) {
                     if ((MediaCodec.BUFFER_FLAG_CODEC_CONFIG & bufferInfo.flags) != 0) {
                         Logger.d(this, "ignoring BUFFER_FLAG_CODEC_CONFIG");
                         bufferInfo.size = 0;
@@ -247,18 +251,22 @@ public class RecordingDevice extends EncoderDevice {
 
                     if (formatStatus == 0) { throw new RuntimeException("muxer hasn't started"); }
 
-                    final ByteBuffer byteBuffer = mediaCodec.getOutputBuffer(status);
+                    final ByteBuffer byteBuffer = mediaCodec.getOutputBuffer(index);
+                    if (byteBuffer == null) {
+                        Logger.w(this, "byteBuffer is null, skipping");
+                        continue;
+                    }
                     bufferInfo.presentationTimeUs = ((System.nanoTime() - start) / 1000L);
                     mediaMuxer.writeSampleData(trackIndex, byteBuffer, bufferInfo);
                     byteBuffer.clear();
-                    mediaCodec.releaseOutputBuffer(status, false);
+                    mediaCodec.releaseOutputBuffer(index, false);
                     if ((bufferInfo.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0
                             || mShouldStopEncoding) {
                         Logger.d(this, "end of stream reached");
                         mShouldStopEncoding = true;
                         break;
                     }
-                } else if (status == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
+                } else if (index == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
                     if (formatStatus != 0) { throw new RuntimeException("format changed twice"); }
 
                     final MediaFormat mediaFormat = mediaCodec.getOutputFormat();

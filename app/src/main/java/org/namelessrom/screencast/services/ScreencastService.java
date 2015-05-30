@@ -51,6 +51,7 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -106,7 +107,7 @@ public class ScreencastService extends Service {
             }
 
             mStartTime = System.currentTimeMillis();
-            mSimpleDateFormat = new SimpleDateFormat("mm:ss");
+            mSimpleDateFormat = new SimpleDateFormat("mm:ss", Locale.getDefault());
             mSimpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
             try {
