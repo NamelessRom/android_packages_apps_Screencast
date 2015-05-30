@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 121
+    compileSdkVersion 122
     buildToolsVersion "22.0.1"
 
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 121
+        targetSdkVersion 122
     }
     buildTypes {
         release {

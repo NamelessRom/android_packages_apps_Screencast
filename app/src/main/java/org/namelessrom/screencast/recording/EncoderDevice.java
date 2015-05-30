@@ -62,6 +62,8 @@ public abstract class EncoderDevice {
     }
 
     private void destroyDisplaySurface(final MediaCodec codec) {
+        Logger.v(this, "destroying display surface");
+
         if (codec != null) {
             codec.stop();
             codec.release();
@@ -156,18 +158,19 @@ public abstract class EncoderDevice {
                 DisplayManager.VIRTUAL_DISPLAY_FLAG_PUBLIC;
         final VirtualDisplay virtualDisplay = dm.createVirtualDisplay(VIRTUAL_DISPLAY_NAME,
                 mWidth, mHeight, metrics.densityDpi, displaySurface, displayFlags);
-        Logger.i(this, String.format("Created virtual display (%s)", displayFlags));
+        Logger.i(this, "Created virtual display, flags -> %s", displayFlags);
         mVirtualDisplay = virtualDisplay;
 
         return virtualDisplay;
     }
 
     public void stop() throws IllegalStateException {
+        Logger.v(this, "stopping encoder device");
         mShouldStopEncoding = true;
 
         // some devices do not honor eof signaling, work around that
         if (!mSignalEndOfIs) {
-            Logger.d(this, "can not signal end of input stream, sleeping for 500ms");
+            Logger.d(this, "not signaling end of input stream, sleeping for 500ms instead");
             try { Thread.sleep(500); } catch (InterruptedException ignored) { }
         } else {
             if (mMediaCodec != null) {
@@ -176,11 +179,6 @@ public abstract class EncoderDevice {
         }
         if (mMediaCodec != null) {
             mMediaCodec.flush();
-            mMediaCodec = null;
-        }
-        if (mVirtualDisplay != null) {
-            mVirtualDisplay.release();
-            mVirtualDisplay = null;
         }
     }
 

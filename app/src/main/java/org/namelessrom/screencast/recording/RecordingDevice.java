@@ -236,7 +236,6 @@ public class RecordingDevice extends EncoderDevice {
             while (true) {
                 status = mediaCodec.dequeueOutputBuffer(bufferInfo, -1L);
                 if (status >= 0) {
-                    Logger.i(this, "Dequeued buffer %s", bufferInfo.presentationTimeUs);
                     if ((MediaCodec.BUFFER_FLAG_CODEC_CONFIG & bufferInfo.flags) != 0) {
                         Logger.d(this, "ignoring BUFFER_FLAG_CODEC_CONFIG");
                         bufferInfo.size = 0;
