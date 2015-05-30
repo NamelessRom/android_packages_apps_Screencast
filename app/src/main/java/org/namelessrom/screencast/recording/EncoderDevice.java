@@ -30,6 +30,7 @@ import android.view.Surface;
 
 import org.namelessrom.screencast.Logger;
 import org.namelessrom.screencast.PreferenceHelper;
+import org.namelessrom.screencast.R;
 import org.namelessrom.screencast.Utils;
 
 import java.io.IOException;
@@ -46,11 +47,18 @@ public abstract class EncoderDevice {
     private MediaCodec mMediaCodec;
     private VirtualDisplay mVirtualDisplay;
 
+    // some devices do not honor eof signaling
+    protected boolean mSignalEndOfIs;
+
+    protected boolean mShouldStopEncoding;
+
     public EncoderDevice(final Context context, final int width, final int height) {
         mContext = context;
 
         mWidth = width;
         mHeight = height;
+
+        mSignalEndOfIs = mContext.getResources().getBoolean(R.bool.config_signalEOS);
     }
 
     private void destroyDisplaySurface(final MediaCodec codec) {
@@ -155,8 +163,18 @@ public abstract class EncoderDevice {
     }
 
     public void stop() throws IllegalStateException {
+        mShouldStopEncoding = true;
+
+        // some devices do not honor eof signaling, work around that
+        if (!mSignalEndOfIs) {
+            Logger.d(this, "can not signal end of input stream, sleeping for 500ms");
+            try { Thread.sleep(500); } catch (InterruptedException ignored) { }
+        } else {
+            if (mMediaCodec != null) {
+                mMediaCodec.signalEndOfInputStream();
+            }
+        }
         if (mMediaCodec != null) {
-            mMediaCodec.signalEndOfInputStream();
             mMediaCodec = null;
         }
         if (mVirtualDisplay != null) {

@@ -92,8 +92,10 @@ public class RecordingDevice extends EncoderDevice {
                     bufferInfo.presentationTimeUs = ((System.nanoTime() - l) / 1000L);
                     muxer.writeSampleData(track, byteBuffer, bufferInfo);
                     recorder.codec.releaseOutputBuffer(status, false);
-                    if ((bufferInfo.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0) {
+                    if ((bufferInfo.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0
+                            || mShouldStopEncoding) {
                         Logger.d(this, "end of stream reached");
+                        mShouldStopEncoding = true;
                         break;
                     }
                 } else if (status == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
@@ -247,8 +249,10 @@ public class RecordingDevice extends EncoderDevice {
                     mediaMuxer.writeSampleData(trackIndex, byteBuffer, bufferInfo);
                     byteBuffer.clear();
                     mediaCodec.releaseOutputBuffer(status, false);
-                    if ((bufferInfo.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0) {
+                    if ((bufferInfo.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0
+                            || mShouldStopEncoding) {
                         Logger.d(this, "end of stream reached");
+                        mShouldStopEncoding = true;
                         break;
                     }
                 } else if (status == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
