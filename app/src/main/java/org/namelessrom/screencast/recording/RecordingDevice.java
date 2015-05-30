@@ -173,6 +173,10 @@ public class RecordingDevice extends EncoderDevice {
                 final int status = codec.dequeueInputBuffer(1024L);
                 if (status >= 0) {
                     byteBuffer = codec.getInputBuffer(status);
+                    if (byteBuffer == null) {
+                        Logger.w(this, "byteBuffer is null, skipping");
+                        continue;
+                    }
                     int number = record.read(byteBuffer, byteBuffer.capacity());
                     if (number < 0) {
                         number = 0;
