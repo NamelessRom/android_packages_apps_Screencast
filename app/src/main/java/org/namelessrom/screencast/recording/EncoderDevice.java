@@ -175,6 +175,7 @@ public abstract class EncoderDevice {
             }
         }
         if (mMediaCodec != null) {
+            mMediaCodec.flush();
             mMediaCodec = null;
         }
         if (mVirtualDisplay != null) {
